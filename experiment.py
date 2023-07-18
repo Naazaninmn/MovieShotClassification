@@ -1,3 +1,4 @@
+import torch
 import torchvision
 from model import VGG16
 
