@@ -1,6 +1,6 @@
 import torch
 import torchvision
-from model import VGG16
+from model import MovieShotModel
 
 class Experiment:
     
@@ -9,9 +9,7 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        self.model = VGG16()
-        temp = torchvision.models.vgg16(pretrained=True)
-        self.model.features.load_state_dict(temp.state_dict())
+        self.model = MovieShotModel
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():

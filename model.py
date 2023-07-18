@@ -1,79 +1,54 @@
 import torch.nn as nn
-from torchvision.models import vgg16
+from torchvision.models import resnet18
 from collections import OrderedDict
 
 
-class VGG16(nn.Module):
-
+class FeatureExtractor( nn.Module ):
     def __init__(self):
-        super( VGG16, self ).__init__()
-    
-        self.features = nn.Sequential(
-            # conv1
-            nn.Conv2d(3, 64, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-            
-            # conv2
-            nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
+        super( FeatureExtractor, self ).__init__()
+        self.resnet18 = resnet18( pretrained=True )
 
-            # conv3
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-
-            # conv4
-            nn.Conv2d(256, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2, return_indices=True),
-
-            # conv5
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, stride=2, return_indices=True)
-        )
-
-        self.classifier = nn.Sequential(
-            nn.Linear(512 * 7 * 7, 4096),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Linear(4096, 5)
-        )
-
-        # We need these for MaxUnpool operation
-        self.conv_layer_indices = [0, 2, 5, 7, 10, 12, 14, 17, 19, 21, 24, 26, 28]
-        self.feature_maps = OrderedDict()
-        self.pool_locs = OrderedDict()
-        
     def forward(self, x):
-        for layer in self.features:
-            if isinstance(layer, nn.MaxPool2d):
-                x, location = layer(x)
-            else:
-                x = layer(x)
-        
-        x = x.view(x.size()[0], -1)
-        x = self.classifier(x)
+        x = self.resnet18.conv1( x )
+        x = self.resnet18.bn1( x )
+        x = self.resnet18.relu( x )
+        x = self.resnet18.maxpool( x )
+        x = self.resnet18.layer1( x )
+        x = self.resnet18.layer2( x )
+        x = self.resnet18.layer3( x )
+        x = self.resnet18.layer4( x )
+        x = self.resnet18.avgpool( x )
+        x = x.squeeze()
+        if len( x.size() ) < 2:
+            return x.unsqueeze( 0 )
         return x
+
+
+class MovieShotModel( nn.Module ):
+    def __init__(self):
+        super( MovieShotModel, self ).__init__()
+        self.feature_extractor = FeatureExtractor()
+
+        self.category_encoder = nn.Sequential(
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU(),
+
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU(),
+
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU()
+        )
+        self.classifier = nn.Linear( 512, 5 )
+
+    def forward(self, x):
+        x = self.feature_extractor( x )
+        x = self.category_encoder( x )
+        x = self.classifier( x )
+
+
+    
 
