@@ -1,13 +1,15 @@
 import torch.nn as nn
+from torchvision.models import vgg16
 from collections import OrderedDict
 
 
 class VGG16(nn.Module):
 
     def __init__(self):
-        super().__init__()
+        super( VGG16, self ).__init__()
+        self.vgg16 = vgg16( pretrained=True )
     
-        self.features = nn.Sequential(
+        self.vgg16.features = nn.Sequential(
             # conv1
             nn.Conv2d(3, 64, 3, padding=1),
             nn.ReLU(),
@@ -50,7 +52,7 @@ class VGG16(nn.Module):
             nn.MaxPool2d(2, stride=2, return_indices=True)
         )
 
-        self.classifier = nn.Sequential(
+        self.vgg16.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(),
             nn.Dropout(),
@@ -66,7 +68,7 @@ class VGG16(nn.Module):
         self.pool_locs = OrderedDict()
         
     def forward(self, x):
-        for layer in self.features:
+        for layer in self.vgg16.features:
             if isinstance(layer, nn.MaxPool2d):
                 x, location = layer(x)
             else:
