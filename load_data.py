@@ -46,18 +46,9 @@ def read_lines(data_path):
 def build_splits():
 
     examples = read_lines('Data')
-
-    # # Compute ratios of examples for each category
-    # source_category_ratios = {category_idx: len(examples_list) for category_idx, examples_list in
-    #                           source_examples.items()}
-    # source_total_examples = sum(source_category_ratios.values())
-    # source_category_ratios = {category_idx: c / source_total_examples for category_idx, c in
-    #                           source_category_ratios.items()}
-
     total_examples = 500
 
     # Build splits
-
     train_split_length = total_examples * 5/6  # 5/6 of the training split used for validation
     test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
     val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
@@ -66,15 +57,20 @@ def build_splits():
     val_examples = []
     test_examples = []
 
+    train_examples_dict = {}
+
     for category_idx, examples_list in examples.items():
         split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
             if i > split_idx:
-                train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+                if category_idx not in examples.keys():
+                    train_examples_dict[category_idx] = [example]
+                else:
+                    train_examples_dict[category_idx].append(example)
             else:
                 test_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
 
-    for category_idx, examples_list in train_examples.items():
+    for category_idx, examples_list in train_examples_dict.items():
         split_idx = 1/5 * val_split_length
         for i, example in enumerate(examples_list):
             if i > split_idx:
