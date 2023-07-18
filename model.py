@@ -61,8 +61,6 @@ class VGG16(nn.Module):
             nn.Linear(4096, 5)
         )
 
-        self.vgg16 = vgg16( pretrained=True )
-
         # We need these for MaxUnpool operation
         self.conv_layer_indices = [0, 2, 5, 7, 10, 12, 14, 17, 19, 21, 24, 26, 28]
         self.feature_maps = OrderedDict()
