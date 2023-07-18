@@ -1,4 +1,4 @@
-import torch
+import torchvision
 from model import VGG16
 
 class Experiment:
@@ -9,7 +9,7 @@ class Experiment:
 
         # Setup model
         self.model = VGG16()
-        temp = torch.models.vgg16(pretrained=True)
+        temp = torchvision.models.vgg16(pretrained=True)
         self.model.load_state_dict(temp.state_dict())
         self.model.train()
         self.model.to(self.device)
