@@ -8,7 +8,7 @@ class VGG16(nn.Module):
     def __init__(self):
         super( VGG16, self ).__init__()
     
-        self.vgg16.features = nn.Sequential(
+        self.features = nn.Sequential(
             # conv1
             nn.Conv2d(3, 64, 3, padding=1),
             nn.ReLU(),
@@ -51,7 +51,7 @@ class VGG16(nn.Module):
             nn.MaxPool2d(2, stride=2, return_indices=True)
         )
 
-        self.vgg16.classifier = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             nn.ReLU(),
             nn.Dropout(),
@@ -67,13 +67,13 @@ class VGG16(nn.Module):
         self.pool_locs = OrderedDict()
         
     def forward(self, x):
-        for layer in self.vgg16.features:
+        for layer in self.features:
             if isinstance(layer, nn.MaxPool2d):
                 x, location = layer(x)
             else:
                 x = layer(x)
         
         x = x.view(x.size()[0], -1)
-        x = self.vgg16.classifier(x)
+        x = self.classifier(x)
         return x
 
