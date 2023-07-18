@@ -7,7 +7,6 @@ class VGG16(nn.Module):
 
     def __init__(self):
         super( VGG16, self ).__init__()
-        self.vgg16 = vgg16( pretrained=True )
     
         self.vgg16.features = nn.Sequential(
             # conv1
@@ -61,6 +60,8 @@ class VGG16(nn.Module):
             nn.Dropout(),
             nn.Linear(4096, 5)
         )
+
+        self.vgg16 = vgg16( pretrained=True )
 
         # We need these for MaxUnpool operation
         self.conv_layer_indices = [0, 2, 5, 7, 10, 12, 14, 17, 19, 21, 24, 26, 28]
