@@ -9,7 +9,7 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        self.model = MovieShotModel
+        self.model = MovieShotModel()
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():
