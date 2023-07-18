@@ -63,7 +63,7 @@ def build_splits():
         split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
             if i > split_idx:
-                if category_idx not in examples.keys():
+                if category_idx not in train_examples_dict.keys():
                     train_examples_dict[category_idx] = [example]
                 else:
                     train_examples_dict[category_idx].append(example)
