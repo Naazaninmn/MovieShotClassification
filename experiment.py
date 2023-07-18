@@ -9,6 +9,8 @@ class Experiment:
 
         # Setup model
         self.model = VGG16()
+        temp = torch.models.vgg16(pretrained=True)
+        self.model.load_state_dict(temp.state_dict())
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():
