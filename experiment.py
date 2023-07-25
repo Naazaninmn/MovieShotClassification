@@ -45,6 +45,7 @@ class Experiment:
 
     def train_iteration(self, data):
         x, y = data
+        print(y)
         x = x.to(self.device)
         y = y.to(self.device)
 
