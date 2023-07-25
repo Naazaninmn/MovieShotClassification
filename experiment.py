@@ -1,7 +1,7 @@
 import torch
 from model import MovieShotModel
 import torch.nn as nn
-from torchvision.models import vgg16_bn
+from torchvision.models import vgg16_bn, vgg16, resnet18
 
 class Experiment:
     
@@ -11,9 +11,9 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        #self.model = vgg16_bn(pretrained=True)
-        #self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
-        self.model = MovieShotModel()
+        self.model = resnet18(pretrained=True)
+        self.model.classifier[-1] = nn.Linear(in_features=512, out_features=5)
+        #self.model = MovieShotModel()
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():
