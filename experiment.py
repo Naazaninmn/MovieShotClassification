@@ -48,7 +48,6 @@ class Experiment:
         x = x.to(self.device)
         y = y.to(self.device)
 
-        print(data)
         logits = self.model(x)
         print(logits)
         loss = self.criterion(logits, y)
