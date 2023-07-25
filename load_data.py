@@ -97,7 +97,7 @@ def build_splits():
         normalize
     ])
 
-    print(train_examples)
+    print(test_examples)
     # Dataloaders
     train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
     val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
