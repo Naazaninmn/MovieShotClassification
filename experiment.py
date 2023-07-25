@@ -45,11 +45,11 @@ class Experiment:
 
     def train_iteration(self, data):
         x, y = data
-        print(y)
         x = x.to(self.device)
         y = y.to(self.device)
 
         logits = self.model(x)
+        print(y)
         loss = self.criterion(logits, y)
 
         self.optimizer.zero_grad()
