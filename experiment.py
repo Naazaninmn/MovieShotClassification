@@ -49,7 +49,7 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        print(y)
+        print(logits)
         loss = self.criterion(logits, y)
 
         self.optimizer.zero_grad()
