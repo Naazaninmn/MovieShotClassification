@@ -1,6 +1,5 @@
 import logging
 import os
-import torch
 from experiment import Experiment
 from load_data import build_splits
 from parse_args import parse_arguments

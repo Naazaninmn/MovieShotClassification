@@ -1,11 +1,11 @@
 import torch
-import torchvision
 from model import MovieShotModel
 
 class Experiment:
     
     def __init__(self, opt):
 
+        self.opt = opt
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
@@ -49,7 +49,6 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        print(logits)
         loss = self.criterion(logits, y)
 
         self.optimizer.zero_grad()
