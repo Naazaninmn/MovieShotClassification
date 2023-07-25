@@ -33,6 +33,8 @@ class MovieShotModel( nn.Module ):
         x = self.feature_extractor( x )
         x = self.classifier( x )
 
+        return x
+
 
     
 
