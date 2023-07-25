@@ -12,7 +12,7 @@ class Experiment:
 
         # Setup model
         self.model = resnet18(pretrained=True)
-        self.model.classifier[-1] = nn.Linear(in_features=512, out_features=5)
+        self.model.fc = nn.Linear(512, 5)
         #self.model = MovieShotModel()
         self.model.train()
         self.model.to(self.device)
