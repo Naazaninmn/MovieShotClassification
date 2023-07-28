@@ -2,6 +2,26 @@ import torch
 from model import MovieShotModel
 import torch.nn as nn
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
+from pytorch_metric_learning import losses
+
+
+class SupervisedContrastiveLoss(nn.Module):
+    def __init__(self, temperature=0.1):
+        super(SupervisedContrastiveLoss, self).__init__()
+        self.temperature = temperature
+
+    def forward(self, feature_vectors, labels):
+        # Normalize feature vectors
+        feature_vectors_normalized = F.normalize(feature_vectors, p=2, dim=1)
+        # Compute logits
+        logits = torch.div(
+            torch.matmul(
+                feature_vectors_normalized, torch.transpose(feature_vectors_normalized, 0, 1)
+            ),
+            self.temperature,
+        )
+        return losses.NTXentLoss(temperature=0.07)(logits, torch.squeeze(labels))
+
 
 class Experiment:
     
@@ -11,7 +31,7 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        self.model = vgg19(pretrained=True)
+        self.model = vgg19_bn(pretrained=True)
         self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
         #self.model = MovieShotModel()
         self.model.train()
@@ -20,8 +40,12 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
-        self.criterion = torch.nn.CrossEntropyLoss()
+        #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
+        #self.criterion = torch.nn.CrossEntropyLoss()
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
+        self.criterion = SupervisedContrastiveLoss(temperature=0.1)
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
+
 
     def save_checkpoint(self, path, iteration, best_accuracy, total_train_loss):
         checkpoint = {}
