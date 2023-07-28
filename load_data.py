@@ -22,8 +22,7 @@ class ShotDataset(Dataset):
     def __getitem__(self, index):
         img_path, y = self.examples[index]
         x = self.transform(Image.open(img_path).convert('RGB'))
-        x2 = T.functional.hflip(x)
-        return (x, y), (x2, y)
+        return x, y
 
 
 def read_lines(data_path):
@@ -85,15 +84,14 @@ def build_splits():
 
     train_transform = T.Compose([
         T.Resize(256),
-        T.RandAugment(3, 15),
-        T.CenterCrop(224),
+        T.ColorJitter(),
+        T.RandomHorizontalFlip(),
         T.ToTensor(),
         normalize
     ])
 
     eval_transform = T.Compose([
         T.Resize(256),
-        T.CenterCrop(224),
         T.ToTensor(),
         normalize
     ])
