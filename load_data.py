@@ -85,7 +85,7 @@ def build_splits():
     train_transform = T.Compose([
         T.Resize(256),
         T.ColorJitter(),
-        T.RandomHorizontalFlip(),
+        T.RandomHorizontalFlip(p=1.0),
         T.ToTensor(),
         normalize
     ])
