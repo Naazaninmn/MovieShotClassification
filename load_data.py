@@ -87,6 +87,7 @@ def build_splits():
         T.RandAugment(3, 15),
         T.CenterCrop(224),
         T.ToTensor(),
+        T.functional.hflip(),
         normalize
     ])
 
