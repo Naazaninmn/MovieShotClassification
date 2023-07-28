@@ -77,8 +77,8 @@ class Experiment:
         x = x.to(self.device)
         y = y.to(self.device)
 
-        logits = self.model(x)
-        loss = self.criterion(logits, y)
+        #logits = self.model(x)
+        loss = self.criterion(x, y)
 
         self.optimizer.zero_grad()
         loss.backward()
