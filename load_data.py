@@ -22,7 +22,8 @@ class ShotDataset(Dataset):
     def __getitem__(self, index):
         img_path, y = self.examples[index]
         x = self.transform(Image.open(img_path).convert('RGB'))
-        return x, y
+        x2 = T.functional.hflip(x)
+        return (x, y), (x2, y)
 
 
 def read_lines(data_path):
@@ -87,7 +88,6 @@ def build_splits():
         T.RandAugment(3, 15),
         T.CenterCrop(224),
         T.ToTensor(),
-        T.functional.hflip(),
         normalize
     ])
 
