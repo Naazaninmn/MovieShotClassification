@@ -2,6 +2,7 @@ import torch
 from model import MovieShotModel
 import torch.nn as nn
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
+import torch.nn.functional as F
 from pytorch_metric_learning import losses
 
 
