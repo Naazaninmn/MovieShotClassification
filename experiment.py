@@ -15,7 +15,7 @@ class SupervisedContrastiveLoss(nn.Module):
         logits_normalized = torch.flatten(F.normalize(logits, p=2, dim=1))
         logits_normalized = torch.div(
             torch.dot(
-                logits_normalized, torch.transpose(logits_normalized, 0, 1)
+                logits_normalized, torch.transpose(logits_normalized)
             ),
             self.temperature,
         )
