@@ -73,7 +73,7 @@ def main(opt):
     ax.set_title('Confusion Matrix for Movie Shot Classification')
     ax.set_xticklabels(labels)
     ax.set_yticklabels(labels)
-    plt.show()
+    plt.savefig("cm.jpg")
 
     logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
     logging.info(f'[TEST] F1-score best: {(100 * test_f1):.2f}')
