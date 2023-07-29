@@ -43,9 +43,9 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
-        #self.criterion = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
+        #self.criterion = torch.nn.CrossEntropyLoss()
+        #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
         self.criterion = SupervisedContrastiveLoss(temperature=0.1).to(self.device)
         #self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
 
@@ -80,7 +80,7 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        loss = self.criterion(logits, y) / 4
+        loss = self.criterion(logits, y)
 
         self.optimizer.zero_grad()
         loss.backward()
