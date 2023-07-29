@@ -11,20 +11,19 @@ class SupervisedContrastiveLoss(nn.Module):
         super(SupervisedContrastiveLoss, self).__init__()
         self.temperature = temperature
 
-    def forward(self, feature_vectors, labels):
-        feature_vectors_normalized = F.normalize(feature_vectors, p=2, dim=1)
-        print(feature_vectors_normalized)
-        # Compute logits
-        logits = torch.div(
-            torch.matmul(
-                feature_vectors_normalized, torch.transpose(feature_vectors_normalized, 0, 1)
-            ),
+    def forward(self, logits, labels):
+        logits_normalized = F.normalize(logits, p=2, dim=1)
+        l = torch.matmul(
+                logits_normalized, torch.transpose(logits_normalized, 0, 1)
+            )
+        logits_normalized = torch.div( l
+            ,
             self.temperature,
         )
-        #print(logits)
+        print(l)
         #print(labels)
 
-        return losses.NTXentLoss(temperature=0.07)(torch.flatten(logits), labels)
+        return losses.NTXentLoss(temperature=0.07)(torch.flatten(logits_normalized), labels)
 
 
 class Experiment:
