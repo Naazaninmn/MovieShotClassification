@@ -94,18 +94,18 @@ class Experiment:
         accuracy = 0
         count = 0
         loss = 0
-        true_lables = []
-        preds = []
+        true_lables = torch.empty((1,len(loader)))
+        preds = torch.empty((1,len(loader)))
         with torch.no_grad():
             for x, y in loader:
                 x = x.to(self.device)
                 y = y.to(self.device)
-                true_lables.append(y)
+                torch.cat(true_lables, y)
 
                 logits = self.model(x)
                 loss += self.criterion(logits, y)
                 pred = torch.argmax(logits, dim=-1)
-                preds.append(pred)
+                torch.cat(preds, pred)
 
                 accuracy += (pred == y).sum().item()
                 count += x.size(0)
