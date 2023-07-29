@@ -23,7 +23,7 @@ class SupervisedContrastiveLoss(nn.Module):
         print(logits)
         print(labels)
 
-        return losses.NTXentLoss(temperature=0.07)(logits, labels)
+        return losses.NTXentLoss(temperature=0.07)(torch.flatten(logits), labels)
 
 
 class Experiment:
@@ -45,9 +45,9 @@ class Experiment:
         # Setup optimization procedure
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
         #self.criterion = torch.nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
         self.criterion = SupervisedContrastiveLoss(temperature=0.1).to(self.device)
-        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
+        #self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
 
 
     def save_checkpoint(self, path, iteration, best_accuracy, total_train_loss):
