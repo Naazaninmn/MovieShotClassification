@@ -12,8 +12,7 @@ class SupervisedContrastiveLoss(nn.Module):
         self.temperature = temperature
 
     def forward(self, logits, labels):
-        logits_normalized = F.normalize(logits, p=2, dim=1)
-        print(logits_normalized)
+        logits_normalized = torch.flatten(F.normalize(logits, p=2, dim=1))
         logits_normalized = torch.div(
             torch.dot(
                 logits_normalized, torch.transpose(logits_normalized, 0, 1)
