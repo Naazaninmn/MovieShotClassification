@@ -13,6 +13,7 @@ class SupervisedContrastiveLoss(nn.Module):
 
     def forward(self, logits, labels):
         logits_normalized = F.normalize(logits, p=2, dim=1)
+        print(logits_normalized)
         logits_normalized = torch.div(
             torch.dot(
                 logits_normalized, torch.transpose(logits_normalized, 0, 1)
