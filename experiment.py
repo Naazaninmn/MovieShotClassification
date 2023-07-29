@@ -20,8 +20,8 @@ class SupervisedContrastiveLoss(nn.Module):
             ),
             self.temperature,
         )
-        print(logits)
-        print(labels)
+        print(logits.shape)
+        print(labels.shape)
 
         return losses.NTXentLoss(temperature=0.07)(logits, labels)
 
