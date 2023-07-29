@@ -3,6 +3,8 @@ import os
 from experiment import Experiment
 from load_data import build_splits
 from parse_args import parse_arguments
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
 
 
 def setup_experiment(opt):
@@ -40,7 +42,7 @@ def main(opt):
 
                 if iteration % opt['validate_every'] == 0:
                     # Run validation
-                    val_accuracy, val_loss = experiment.validate( validation_loader )
+                    val_accuracy, val_loss, _, _ = experiment.validate( validation_loader )
                     logging.info(
                         f'[VAL - {iteration}] Loss: {val_loss} | Accuracy: {(100 * val_accuracy):.2f}')
                     if val_accuracy >= best_accuracy:
@@ -62,8 +64,19 @@ def main(opt):
     """
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
-    test_accuracy, _ = experiment.validate( test_loader )
+    test_accuracy, _, test_f1, test_cm = experiment.validate( test_loader )
+
+    labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
+    cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
+    fig, ax = plt.subplots(figsize=(7, 7))
+    cmd.plot(ax=ax, cmap=plt.cm.Blues)
+    ax.set_title('Confusion Matrix for Movie Shot Classification')
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+    plt.show()
+
     logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
+    logging.info(f'[TEST] F1-score best: {(100 * test_f1):.2f}')
 
 
 if __name__ == '__main__':
