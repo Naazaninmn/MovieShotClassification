@@ -114,8 +114,8 @@ class Experiment:
         true_lables = torch.Tensor(true_lables)
         preds = torch.Tensor(preds)
         f1 = f1_score(true_lables, preds, average='macro')
-        recall_score = recall_score(true_lables, preds, average='macro')
-        precision_score = precision_score(true_lables, preds, average='macro')
+        #recall_score = recall_score(true_lables, preds, average='macro')
+        #precision_score = precision_score(true_lables, preds, average='macro')
         cm = confusion_matrix(true_lables, preds)
         self.model.train()
         return mean_accuracy, mean_loss, f1, cm
