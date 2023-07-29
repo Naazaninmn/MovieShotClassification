@@ -107,9 +107,9 @@ class Experiment:
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        f1 = f1_score(y, pred, average='macro')
-        recall_score = recall_score(y, pred, average='macro')
-        precision_score = precision_score(y, pred, average='macro')
+        #f1 = f1_score(y, pred, average='macro')
+        #recall_score = recall_score(y, pred, average='macro')
+        #precision_score = precision_score(y, pred, average='macro')
         cm = confusion_matrix(y, pred)
         self.model.train()
-        return mean_accuracy, mean_loss, f1, cm
+        return mean_accuracy, mean_loss, cm
