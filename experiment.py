@@ -11,15 +11,15 @@ class SupervisedContrastiveLoss(nn.Module):
         super(SupervisedContrastiveLoss, self).__init__()
         self.temperature = temperature
 
-    def forward(self, logits, labels):
-        # feature_vectors_normalized = F.normalize(feature_vectors, p=2, dim=1)
-        # # Compute logits
-        # logits = torch.div(
-        #     torch.matmul(
-        #         feature_vectors_normalized, torch.transpose(feature_vectors_normalized, 0, 1)
-        #     ),
-        #     self.temperature,
-        # )
+    def forward(self, feature_vectors, labels):
+        feature_vectors_normalized = F.normalize(feature_vectors, p=2, dim=1)
+        # Compute logits
+        logits = torch.div(
+            torch.matmul(
+                feature_vectors_normalized, torch.transpose(feature_vectors_normalized, 0, 1)
+            ),
+            self.temperature,
+        )
         print(logits)
         print(labels)
 
@@ -46,7 +46,7 @@ class Experiment:
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
         #self.criterion = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
-        self.criterion = SupervisedContrastiveLoss(temperature=0.1)
+        self.criterion = SupervisedContrastiveLoss(temperature=0.1).to(self.device)
         self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
 
 
