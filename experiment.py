@@ -2,8 +2,7 @@ import torch
 from model import MovieShotModel
 import torch.nn as nn
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
-from torcheval.metrics.functional import multiclass_f1_score as f1_score
-from torchmetrics import ConfusionMatrix as confusion_matrix
+from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
 
@@ -94,27 +93,27 @@ class Experiment:
         accuracy = 0
         count = 0
         loss = 0
-        true_lables = torch.empty((1,len(loader)))
-        preds = torch.empty((1,len(loader)))
+        true_lables = []
+        preds = []
         with torch.no_grad():
             for x, y in loader:
                 x = x.to(self.device)
                 y = y.to(self.device)
-                torch.cat(true_lables, y)
+                true_lables.append(y)
 
                 logits = self.model(x)
                 loss += self.criterion(logits, y)
                 pred = torch.argmax(logits, dim=-1)
-                torch.cat(preds, pred)
+                preds.append(pred)
 
                 accuracy += (pred == y).sum().item()
                 count += x.size(0)
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        f1 = f1_score(true_lables, preds, average='macro', num_classes=5)
-        #recall_score = recall_score(true_lables, preds, average='macro')
-        #precision_score = precision_score(true_lables, preds, average='macro')
-        cm = confusion_matrix(true_lables, preds)
+        f1 = f1_score(true_lables, preds, average='macro').to(self.device)
+        recall_score = recall_score(true_lables, preds, average='macro').to(self.device)
+        precision_score = precision_score(true_lables, preds, average='macro').to(self.device)
+        cm = confusion_matrix(true_lables, preds).to(self.device)
         self.model.train()
         return mean_accuracy, mean_loss, f1, cm
