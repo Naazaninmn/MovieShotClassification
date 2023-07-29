@@ -13,14 +13,13 @@ class SupervisedContrastiveLoss(nn.Module):
 
     def forward(self, logits, labels):
         logits_normalized = F.normalize(logits, p=2, dim=1)
-        l = torch.matmul(
+        logits_normalized = torch.div(
+            torch.dot(
                 logits_normalized, torch.transpose(logits_normalized, 0, 1)
-            )
-        logits_normalized = torch.div( l
-            ,
+            ),
             self.temperature,
         )
-        print(l)
+        print(logits_normalized)
         #print(labels)
 
         return losses.NTXentLoss(temperature=0.07)(torch.flatten(logits_normalized), labels)
