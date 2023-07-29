@@ -34,7 +34,7 @@ class Experiment:
 
         # Setup model
         self.model = vgg19_bn(pretrained=True)
-        self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
+        self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=512)
         #self.model = MovieShotModel()
         self.model.train()
         self.model.to(self.device)
@@ -79,7 +79,7 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        loss = self.criterion(torch.squeeze(logits), y) / 4
+        loss = self.criterion(logits, y) / 4
 
         self.optimizer.zero_grad()
         loss.backward()
