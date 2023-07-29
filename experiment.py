@@ -93,23 +93,27 @@ class Experiment:
         accuracy = 0
         count = 0
         loss = 0
+        true_lables = []
+        preds = []
         with torch.no_grad():
             for x, y in loader:
                 x = x.to(self.device)
                 y = y.to(self.device)
+                true_lables.append(y)
 
                 logits = self.model(x)
                 loss += self.criterion(logits, y)
                 pred = torch.argmax(logits, dim=-1)
+                preds.append(pred)
 
                 accuracy += (pred == y).sum().item()
                 count += x.size(0)
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        #f1 = f1_score(y, pred, average='macro')
-        #recall_score = recall_score(y, pred, average='macro')
-        #precision_score = precision_score(y, pred, average='macro')
-        cm = confusion_matrix(y, pred)
+        f1 = f1_score(true_lables, preds, average='macro')
+        recall_score = recall_score(true_lables, preds, average='macro')
+        precision_score = precision_score(true_lables, preds, average='macro')
+        cm = confusion_matrix(true_lables, preds)
         self.model.train()
-        return mean_accuracy, mean_loss, cm
+        return mean_accuracy, mean_loss, f1, cm
