@@ -99,12 +99,12 @@ class Experiment:
             for x, y in loader:
                 x = x.to(self.device)
                 y = y.to(self.device)
-                true_lables.append(y)
+                true_lables.append(torch.Tensor.cpu(y))
 
                 logits = self.model(x)
                 loss += self.criterion(logits, y)
                 pred = torch.argmax(logits, dim=-1)
-                preds.append(pred)
+                preds.append(torch.Tensor.cpu(pred))
 
                 accuracy += (pred == y).sum().item()
                 count += x.size(0)
