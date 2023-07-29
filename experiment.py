@@ -112,7 +112,7 @@ class Experiment:
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        f1 = f1_score(true_lables, preds, average='macro')
+        f1 = f1_score(true_lables, preds, average='macro', num_classes=5)
         #recall_score = recall_score(true_lables, preds, average='macro')
         #precision_score = precision_score(true_lables, preds, average='macro')
         cm = confusion_matrix(true_lables, preds)
