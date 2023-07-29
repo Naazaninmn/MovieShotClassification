@@ -111,8 +111,8 @@ class Experiment:
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        true_lables.to(self.device)
-        preds.to(self.device)
+        true_lables = torch.Tensor(true_lables)
+        preds = torch.Tensor(preds)
         f1 = f1_score(true_lables, preds, average='macro')
         recall_score = recall_score(true_lables, preds, average='macro')
         precision_score = precision_score(true_lables, preds, average='macro')
