@@ -2,7 +2,8 @@ import torch
 from model import MovieShotModel
 import torch.nn as nn
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
-from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
+from torcheval.metrics.functional import multiclass_f1_score as f1_score
+from torchmetrics import ConfusionMatrix as confusion_matrix
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
 
@@ -112,8 +113,8 @@ class Experiment:
         mean_accuracy = accuracy / count
         mean_loss = loss / count
         f1 = f1_score(true_lables, preds, average='macro')
-        recall_score = recall_score(true_lables, preds, average='macro')
-        precision_score = precision_score(true_lables, preds, average='macro')
+        #recall_score = recall_score(true_lables, preds, average='macro')
+        #precision_score = precision_score(true_lables, preds, average='macro')
         cm = confusion_matrix(true_lables, preds)
         self.model.train()
         return mean_accuracy, mean_loss, f1, cm
