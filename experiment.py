@@ -79,7 +79,7 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        loss = self.criterion(logits, y) / 4
+        loss = self.criterion(torch.squeeze(logits), y) / 4
 
         self.optimizer.zero_grad()
         loss.backward()
