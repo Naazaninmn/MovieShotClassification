@@ -111,9 +111,11 @@ class Experiment:
 
         mean_accuracy = accuracy / count
         mean_loss = loss / count
-        f1 = f1_score(true_lables, preds, average='macro').to(self.device)
-        recall_score = recall_score(true_lables, preds, average='macro').to(self.device)
-        precision_score = precision_score(true_lables, preds, average='macro').to(self.device)
-        cm = confusion_matrix(true_lables, preds).to(self.device)
+        true_lables.to(self.device)
+        preds.to(self.device)
+        f1 = f1_score(true_lables, preds, average='macro')
+        recall_score = recall_score(true_lables, preds, average='macro')
+        precision_score = precision_score(true_lables, preds, average='macro')
+        cm = confusion_matrix(true_lables, preds)
         self.model.train()
         return mean_accuracy, mean_loss, f1, cm
