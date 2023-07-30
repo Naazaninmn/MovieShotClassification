@@ -46,7 +46,7 @@ def read_lines(data_path):
 def build_splits():
 
     examples = read_lines('Data')
-    total_examples = 500
+    total_examples = 600
 
     # Build splits
     train_split_length = total_examples * 5/6  # 5/6 of the training split used for validation
@@ -83,7 +83,7 @@ def build_splits():
     normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
     train_transform = T.Compose([
-        #T.Resize(256),
+        T.Resize(256),
         T.ColorJitter(),
         T.RandomHorizontalFlip(p=1.0),
         T.ToTensor(),
@@ -91,7 +91,7 @@ def build_splits():
     ])
 
     eval_transform = T.Compose([
-        #T.Resize(256),
+        T.Resize(256),
         T.ToTensor(),
         normalize
     ])
