@@ -68,7 +68,7 @@ def main(opt):
 
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
-    fig, ax = plt.subplots(figsize=(7, 7))
+    fig, ax = plt.subplots(figsize=(10, 10))
     cmd.plot(ax=ax, cmap=plt.cm.Blues)
     ax.set_title('Confusion Matrix for Movie Shot Classification')
     ax.set_xticklabels(labels)
