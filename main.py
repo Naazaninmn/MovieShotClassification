@@ -10,9 +10,9 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    train_loader, validation_loader, test_loader = build_splits()
+    train_loader, test_loader = build_splits()
 
-    return experiment, train_loader, validation_loader, test_loader
+    return experiment, train_loader, test_loader
 
 
 def main(opt):
