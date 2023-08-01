@@ -5,7 +5,9 @@ from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
-from sklearn.model_selection import cross_val_predict
+from skorch import NeuralNetClassifier
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import cross_val_score
 
 
 class SupervisedContrastiveLoss(nn.Module):
@@ -44,8 +46,9 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'], weight_decay=0.001)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
         self.criterion = torch.nn.CrossEntropyLoss()
+        self.CV_model = NeuralNetClassifier(self.model, self.criterion, self.optimizer)
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
         #self.criterion = SupervisedContrastiveLoss(temperature=0.1)
         #self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=10, eta_min=1e-6)
@@ -80,19 +83,15 @@ class Experiment:
         x = x.to(self.device)
         y = y.to(self.device)
 
-        logits = self.model(x)
-        #logits = cross_val_predict(self.model, x, y, cv=5)
-        loss = self.criterion(logits, y)
+        #logits = self.model(x)
+        kfold = StratifiedKFold(n_splits=5, shuffle=True)
+        logits = cross_val_score(self.CV_model, x, y, cv=kfold)
 
         #l2_lambda = 0.001
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         #loss = loss + l2_lambda * l2_norm
-
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
         
-        return loss.item()
+        return logits.mean()
 
     def validate(self, loader):
         self.model.eval()

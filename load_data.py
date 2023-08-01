@@ -51,32 +51,33 @@ def build_splits():
     # Build splits
     train_split_length = total_examples * 5/6  # 5/6 of the training split used for validation
     test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
-    val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
+    #val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
 
     train_examples = []
-    val_examples = []
+    #val_examples = []
     test_examples = []
 
-    train_examples_dict = {}
+    #train_examples_dict = {}
 
     for category_idx, examples_list in examples.items():
         split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
             if i > split_idx:
-                if category_idx not in train_examples_dict.keys():
-                    train_examples_dict[category_idx] = [example]
-                else:
-                    train_examples_dict[category_idx].append(example)
+                # if category_idx not in train_examples_dict.keys():
+                #     train_examples_dict[category_idx] = [example]
+                # else:
+                #     train_examples_dict[category_idx].append(example)
+                train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
             else:
                 test_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
 
-    for category_idx, examples_list in train_examples_dict.items():
-        split_idx = 1/5 * val_split_length
-        for i, example in enumerate(examples_list):
-            if i > split_idx:
-                train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
-            else:
-                val_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+    # for category_idx, examples_list in train_examples_dict.items():
+    #     split_idx = 1/5 * val_split_length
+    #     for i, example in enumerate(examples_list):
+    #         if i > split_idx:
+    #             train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+    #         else:
+    #             val_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
     
 
     # Transforms
@@ -98,7 +99,7 @@ def build_splits():
 
     # Dataloaders
     train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
-    val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
+    #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
     test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    return train_loader, val_loader, test_loader
+    return train_loader, test_loader
