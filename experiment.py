@@ -5,6 +5,7 @@ from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
+from sklearn.model_selection import cross_val_predict
 
 
 class SupervisedContrastiveLoss(nn.Module):
@@ -80,11 +81,12 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
+        #logits = cross_val_predict(self.model, x, y, cv=5)
         loss = self.criterion(logits, y)
 
-        l2_lambda = 0.0001
-        l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
-        loss = loss + l2_lambda * l2_norm
+        l1_lambda = 0.001
+        l1_norm = sum(abs(p) for p in self.model.parameters())
+        loss = loss + l1_lambda * l1_norm
 
         self.optimizer.zero_grad()
         loss.backward()
