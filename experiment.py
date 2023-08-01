@@ -81,7 +81,7 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        logits = cross_val_predict(self.model, x, y, cv=5)
+        #logits = cross_val_predict(self.model, x, y, cv=5)
         loss = self.criterion(logits, y)
 
         #l2_lambda = 0.001
