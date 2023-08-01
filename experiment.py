@@ -44,7 +44,7 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'], weight_decay=0.001, momentum=0.9)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=opt['lr'], weight_decay=0.001, momentum=0.9)
         self.criterion = torch.nn.CrossEntropyLoss()
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
         #self.criterion = SupervisedContrastiveLoss(temperature=0.1)
