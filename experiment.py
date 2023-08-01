@@ -82,7 +82,7 @@ class Experiment:
         logits = self.model(x)
         loss = self.criterion(logits, y)
 
-        l2_lambda = 0.01
+        l2_lambda = 0.0001
         l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         loss = loss + l2_lambda * l2_norm
 
