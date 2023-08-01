@@ -44,7 +44,7 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'], weight_decay=0.001, momentum=0.9)
         self.criterion = torch.nn.CrossEntropyLoss()
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
         #self.criterion = SupervisedContrastiveLoss(temperature=0.1)
@@ -81,12 +81,12 @@ class Experiment:
         y = y.to(self.device)
 
         logits = self.model(x)
-        #logits = cross_val_predict(self.model, x, y, cv=5)
+        logits = cross_val_predict(self.model, x, y, cv=5)
         loss = self.criterion(logits, y)
 
-        l1_lambda = 0.001
-        l1_norm = sum(abs(p) for p in self.model.parameters())
-        loss = loss + l1_lambda * l1_norm
+        #l2_lambda = 0.001
+        #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
+        #loss = loss + l2_lambda * l2_norm
 
         self.optimizer.zero_grad()
         loss.backward()
