@@ -16,7 +16,7 @@ def setup_experiment(opt):
 
 
 def main(opt):
-    experiment, train_loader, validation_loader, test_loader = setup_experiment(opt)
+    experiment, train_loader, test_loader = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
