@@ -33,7 +33,7 @@ def main(opt):
         #total_train_loss
         while iteration < opt['max_iterations']:
             for data in train_loader:
-                print(data.shape)
+                print(len(data))
                 #total_train_loss += experiment.train_iteration(data)
 
                 # if iteration % opt['print_every'] == 0:
