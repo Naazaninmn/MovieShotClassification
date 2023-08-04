@@ -1,6 +1,7 @@
 import torch
 from model import MovieShotModel
 import torch.nn as nn
+import numpy as np
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
@@ -85,7 +86,7 @@ class Experiment:
 
         #logits = self.model(x)
         kfold = StratifiedKFold(n_splits=5, shuffle=True)
-        logits = cross_val_score(self.CV_model, x, y, cv=kfold)
+        logits = cross_val_score(self.CV_model, np.array(x), np.array(y), cv=kfold)
 
         #l2_lambda = 0.001
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
