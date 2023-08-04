@@ -40,10 +40,9 @@ def main(opt):
                 train_loader_iterator = iter(train_loader)
                 data = next(train_loader_iterator)
 
-            print(data[0].shape)
             #for data in train_loader:
 
-                #total_train_loss += experiment.train_iteration(data)
+            train_acc = experiment.train_iteration(train_loader)
 
                 # if iteration % opt['print_every'] == 0:
                 #     logging.info(
@@ -51,7 +50,7 @@ def main(opt):
 
             if iteration % opt['validate_every'] == 0:
                 # Run validation
-                train_accuracy = experiment.train_iteration( data )
+                train_accuracy = experiment.train_iteration(train_loader)
                 logging.info(
                     f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
                 if train_accuracy >= best_accuracy:

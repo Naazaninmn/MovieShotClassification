@@ -79,7 +79,8 @@ class Experiment:
         return iteration, best_accuracy, total_train_loss
 
     def train_iteration(self, data):
-        x, y = data
+        x = data[0]
+        y = data[1]
         #x = x.to(self.device)
         #y = y.to(self.device)
 
