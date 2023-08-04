@@ -80,8 +80,8 @@ class Experiment:
 
     def train_iteration(self, data):
         x, y = data
-        x = x.to(self.device)
-        y = y.to(self.device)
+        #x = x.to(self.device)
+        #y = y.to(self.device)
 
         #logits = self.model(x)
         kfold = StratifiedKFold(n_splits=5, shuffle=True)
