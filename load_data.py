@@ -53,9 +53,10 @@ def build_splits():
     test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
     #val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
 
-    train_examples = []
+    train_examples_x = []
+    train_examples_y = []
     #val_examples = []
-    test_examples = []
+    test_loader = []
 
     #train_examples_dict = {}
 
@@ -67,9 +68,11 @@ def build_splits():
                 #     train_examples_dict[category_idx] = [example]
                 # else:
                 #     train_examples_dict[category_idx].append(example)
-                train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+                train_examples_x.append(example)  
+                train_examples_y.append(category_idx) 
             else:
-                test_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+                test_loader.append([example, category_idx]) # each pair is [path_to_img, class_label]
+    
 
     # for category_idx, examples_list in train_examples_dict.items():
     #     split_idx = 1/5 * val_split_length
@@ -98,8 +101,8 @@ def build_splits():
     ])
 
     # Dataloaders
-    train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
+    #train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
     #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
-    test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
+    #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    return train_loader, test_loader
+    return train_examples_x, train_examples_y, test_loader

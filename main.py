@@ -10,13 +10,13 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    train_loader, test_loader = build_splits()
+    train_examples_x, train_examples_y, test_loader = build_splits()
 
-    return experiment, train_loader, test_loader
+    return experiment, train_examples_x, train_examples_y, test_loader
 
 
 def main(opt):
-    experiment, train_loader, test_loader = setup_experiment(opt)
+    experiment, train_examples_x, train_examples_y, test_loader = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
@@ -31,18 +31,16 @@ def main(opt):
         iteration = 0
         best_accuracy = 0
         #total_train_loss = 0
-        train_loader_iterator = iter(train_loader)
+        # train_loader_iterator = iter(train_loader)
         
         while iteration < opt['max_iterations']:
-            try:
-                data = next(train_loader_iterator)
-            except StopIteration:
-                train_loader_iterator = iter(train_loader)
-                data = next(train_loader_iterator)
+            # try:
+            #     data = next(train_loader_iterator)
+            # except StopIteration:
+            #     train_loader_iterator = iter(train_loader)
+            #     data = next(train_loader_iterator)
 
             #for data in train_loader:
-
-            train_acc = experiment.train_iteration(train_loader.dataset)
 
                 # if iteration % opt['print_every'] == 0:
                 #     logging.info(
@@ -50,7 +48,7 @@ def main(opt):
 
             if iteration % opt['validate_every'] == 0:
                 # Run validation
-                train_accuracy = experiment.train_iteration(train_loader.dataset)
+                train_accuracy = experiment.train_iteration(train_examples_x, train_examples_y)
                 logging.info(
                     f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
                 if train_accuracy >= best_accuracy:
@@ -60,10 +58,13 @@ def main(opt):
                 experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
                                             best_accuracy,
                                             total_train_loss)
+            
+            else:
+                train_acc = experiment.train_iteration(train_examples_x, train_examples_y)
 
-                iteration += 1
-                if iteration > opt['max_iterations']:
-                    break
+            iteration += 1
+            if iteration > opt['max_iterations']:
+                break
         
 
     """
