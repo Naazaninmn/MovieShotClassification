@@ -48,7 +48,7 @@ class Experiment:
 
         # Setup optimization procedure
         self.optimizer = torch.optim.Adam
-        self.criterion = torch.nn.BCEWithLogitsLoss
+        self.criterion = torch.nn.CrossEntropyLoss()
         self.CV_model = NeuralNetClassifier(self.model, criterion=self.criterion, optimizer=self.optimizer, lr=opt['lr'], batch_size=32)
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
         #self.criterion = SupervisedContrastiveLoss(temperature=0.1)
