@@ -42,7 +42,7 @@ def main(opt):
 
             #for data in train_loader:
 
-            train_acc = experiment.train_iteration(train_loader)
+            train_acc = experiment.train_iteration(train_loader.dataset)
 
                 # if iteration % opt['print_every'] == 0:
                 #     logging.info(
@@ -50,7 +50,7 @@ def main(opt):
 
             if iteration % opt['validate_every'] == 0:
                 # Run validation
-                train_accuracy = experiment.train_iteration(train_loader)
+                train_accuracy = experiment.train_iteration(train_loader.dataset)
                 logging.info(
                     f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
                 if train_accuracy >= best_accuracy:
