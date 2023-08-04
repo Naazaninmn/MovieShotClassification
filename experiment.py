@@ -79,10 +79,9 @@ class Experiment:
         return iteration, best_accuracy, total_train_loss
 
     def train_iteration(self, data):
-        print(data.shape)
         x, y = data
-        #x = x.to(self.device)
-        #y = y.to(self.device)
+        x = x.to(self.device)
+        y = y.to(self.device)
 
         #logits = self.model(x)
         kfold = StratifiedKFold(n_splits=5, shuffle=True)

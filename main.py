@@ -30,9 +30,18 @@ def main(opt):
         # Train loop
         iteration = 0
         best_accuracy = 0
-        #total_train_loss
+        #total_train_loss = 0
+        train_loader_iterator = iter(train_loader)
+        
         while iteration < opt['max_iterations']:
+            try:
+                data = next(train_loader_iterator)
+            except StopIteration:
+                train_loader_iterator = iter(train_loader)
+                data = next(train_loader_iterator)
+
             #for data in train_loader:
+
                 #total_train_loss += experiment.train_iteration(data)
 
                 # if iteration % opt['print_every'] == 0:
@@ -41,7 +50,7 @@ def main(opt):
 
             if iteration % opt['validate_every'] == 0:
                 # Run validation
-                train_accuracy = experiment.train_iteration(train_loader)
+                train_accuracy = experiment.train_iteration( data )
                 logging.info(
                     f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
                 if train_accuracy >= best_accuracy:
@@ -52,9 +61,9 @@ def main(opt):
                                             best_accuracy,
                                             total_train_loss)
 
-            iteration += 1
-            if iteration > opt['max_iterations']:
-                break
+                iteration += 1
+                if iteration > opt['max_iterations']:
+                    break
         
 
     """
