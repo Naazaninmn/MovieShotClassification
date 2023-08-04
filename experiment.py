@@ -46,7 +46,7 @@ class Experiment:
             param.requires_grad = True
 
         # Setup optimization procedure
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
+        #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
         self.criterion = torch.nn.CrossEntropyLoss()
         self.CV_model = NeuralNetClassifier(self.model, criterion=self.criterion, optimizer=torch.optim.Adam(self.model.parameters(), lr=opt['lr']))
         #self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-5, weight_decay=1e-6)
