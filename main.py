@@ -32,30 +32,29 @@ def main(opt):
         best_accuracy = 0
         #total_train_loss
         while iteration < opt['max_iterations']:
-            for data in train_loader:
-                print(len(data))
+            #for data in train_loader:
                 #total_train_loss += experiment.train_iteration(data)
 
                 # if iteration % opt['print_every'] == 0:
                 #     logging.info(
                 #         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
-                if iteration % opt['validate_every'] == 0:
-                    # Run validation
-                    train_accuracy = experiment.train_iteration( data )
-                    logging.info(
-                        f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
-                    if train_accuracy >= best_accuracy:
-                        best_accuracy = train_accuracy
-                        experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
-                                                    best_accuracy, total_train_loss)
-                    experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
-                                                best_accuracy,
-                                                total_train_loss)
+            if iteration % opt['validate_every'] == 0:
+                # Run validation
+                train_accuracy = experiment.train_iteration(train_loader)
+                logging.info(
+                    f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
+                if train_accuracy >= best_accuracy:
+                    best_accuracy = train_accuracy
+                    experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
+                                                best_accuracy, total_train_loss)
+                experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
+                                            best_accuracy,
+                                            total_train_loss)
 
-                iteration += 1
-                if iteration > opt['max_iterations']:
-                    break
+            iteration += 1
+            if iteration > opt['max_iterations']:
+                break
         
 
     """
