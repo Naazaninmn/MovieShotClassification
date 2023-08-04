@@ -79,7 +79,7 @@ class Experiment:
         return iteration, best_accuracy, total_train_loss
 
     def train_iteration(self, data):
-        print(len(data))
+        print(data.shape)
         x, y = data
         #x = x.to(self.device)
         #y = y.to(self.device)
