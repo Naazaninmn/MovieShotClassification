@@ -86,13 +86,13 @@ class Experiment:
 
         #logits = self.model(x)
         kfold = StratifiedKFold(n_splits=5, shuffle=True)
-        logits = cross_val_score(self.CV_model, torch.FloatTensor(x), torch.tensor(y), cv=kfold)
+        print(cross_val_score(self.CV_model, torch.tensor(x), torch.tensor(y), cv=kfold))
 
         #l2_lambda = 0.001
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         #loss = loss + l2_lambda * l2_norm
         
-        return logits.mean()
+        #return logits.mean()
 
     def validate(self, loader):
         self.model.eval()
