@@ -40,6 +40,7 @@ def main(opt):
                 train_loader_iterator = iter(train_loader)
                 data = next(train_loader_iterator)
 
+            print(len(data))
             #for data in train_loader:
 
                 #total_train_loss += experiment.train_iteration(data)
