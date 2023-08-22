@@ -106,7 +106,6 @@ def build_splits():
     #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    print(np.array(train_examples_x))
     train_examples_x = ShotDataset(train_examples_x, train_transform)
     test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     return train_examples_x, train_examples_y, test_loader
