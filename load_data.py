@@ -56,7 +56,7 @@ def build_splits():
     train_examples_x = []
     train_examples_y = []
     #val_examples = []
-    test_loader = []
+    test_examples = []
 
     #train_examples_dict = {}
 
@@ -71,7 +71,7 @@ def build_splits():
                 train_examples_x.append(example)  
                 train_examples_y.append(category_idx) 
             else:
-                test_loader.append([example, category_idx]) # each pair is [path_to_img, class_label]
+                test_examples.append([example, category_idx]) # each pair is [path_to_img, class_label]
     
 
     # for category_idx, examples_list in train_examples_dict.items():
@@ -105,4 +105,6 @@ def build_splits():
     #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
+    train_examples_x = ShotDataset(train_examples_x, train_transform)
+    test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     return train_examples_x, train_examples_y, test_loader

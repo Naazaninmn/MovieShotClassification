@@ -3,6 +3,7 @@ import os
 from experiment import Experiment
 from load_data import build_splits
 from parse_args import parse_arguments
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 
@@ -11,6 +12,9 @@ def setup_experiment(opt):
 
     experiment = Experiment(opt)
     train_examples_x, train_examples_y, test_loader = build_splits()
+    data = np.hstack(np.array(train_examples_x), np.array(train_examples_y))
+    print(np.array(train_examples_x).shape)
+    print(data.shape)
 
     return experiment, train_examples_x, train_examples_y, test_loader
 
