@@ -13,7 +13,7 @@ def setup_experiment(opt):
     experiment = Experiment(opt)
     train_examples_x, train_examples_y, test_loader = build_splits()
     data = np.hstack(np.array(train_examples_x), np.array(train_examples_y))
-    print(data.shape)
+    print(data)
 
     return experiment, train_examples_x, train_examples_y, test_loader
 

@@ -21,9 +21,9 @@ class ShotDataset(Dataset):
         return len(self.examples)
 
     def __getitem__(self, index):
-        img_path, y = self.examples[index]
+        img_path = self.examples[index]
         x = self.transform(Image.open(img_path).convert('RGB'))
-        return x, y
+        return x
 
 
 def read_lines(data_path):
