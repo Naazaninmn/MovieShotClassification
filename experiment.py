@@ -1,5 +1,5 @@
 import torch
-from experiment import ShotDataset
+from load_data import ShotDataset
 import torch.nn as nn
 import numpy as np
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
