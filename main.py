@@ -11,15 +11,15 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    train_examples, test_loader = build_splits()
+    dataset= build_splits()
     #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
 
-    return experiment, train_examples, test_loader
+    return experiment, dataset
 
 
 def main(opt):
-    experiment, train_examples, test_loader = setup_experiment(opt)
-    print(train_examples)
+    experiment, dataset= setup_experiment(opt)
+    print(dataset)
     if not opt['test']:  # Skip training if '--test' flag is set   
             
         # Restore last checkpoint
@@ -32,7 +32,7 @@ def main(opt):
         # Train loop
         iteration = 0
         best_accuracy = 0
-        #total_train_loss = 0
+        total_test_loss = 0
         # train_loader_iterator = iter(train_loader)
         
         while iteration < opt['max_iterations']:
@@ -48,21 +48,17 @@ def main(opt):
                 #     logging.info(
                 #         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
-            if iteration % opt['validate_every'] == 0:
-                # Run validation
-                train_accuracy = experiment.train_iteration(train_examples)
-                logging.info(
-                    f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
-                if train_accuracy >= best_accuracy:
-                    best_accuracy = train_accuracy
-                    experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
-                                                best_accuracy, total_train_loss)
-                experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
-                                            best_accuracy,
-                                            total_train_loss)
-            
-            else:
-                train_acc = experiment.train_iteration(train_examples)
+            test_loss, test_accuracy = experiment.train_iteration(dataset)
+            total_test_loss += test_loss
+            logging.info(
+                f'[TEST - {iteration}] Loss: {test_loss} | Accuracy: {(100 * test_accuracy):.2f}')
+            if test_accuracy >= best_accuracy:
+                best_accuracy = test_accuracy
+                experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
+                                            best_accuracy, total_train_loss)
+            experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
+                                        best_accuracy,
+                                        total_test_loss)
 
             iteration += 1
             if iteration > opt['max_iterations']:
@@ -73,21 +69,21 @@ def main(opt):
     1)We use the best model(s) on the validation set on the test set
     2)If the experiment is clip_disentangle, we also use 4 next best models
     """
-    # Test
-    experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
-    test_accuracy, _, test_f1, test_cm = experiment.validate( test_loader )
+    # # Test
+    # experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
+    # test_accuracy, _, test_f1, test_cm = experiment.validate( test_loader )
 
-    labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
-    cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
-    fig, ax = plt.subplots(figsize=(10, 10))
-    cmd.plot(ax=ax, cmap=plt.cm.Blues)
-    ax.set_title('Confusion Matrix for Movie Shot Classification')
-    ax.set_xticklabels(labels)
-    ax.set_yticklabels(labels)
-    plt.savefig("cm.jpg")
+    # labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
+    # cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
+    # fig, ax = plt.subplots(figsize=(10, 10))
+    # cmd.plot(ax=ax, cmap=plt.cm.Blues)
+    # ax.set_title('Confusion Matrix for Movie Shot Classification')
+    # ax.set_xticklabels(labels)
+    # ax.set_yticklabels(labels)
+    # plt.savefig("cm.jpg")
 
-    logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
-    logging.info(f'[TEST] F1-score best: {(test_f1):.2f}')
+    # logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
+    # logging.info(f'[TEST] F1-score best: {(test_f1):.2f}')
 
 
 if __name__ == '__main__':

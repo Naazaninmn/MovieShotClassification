@@ -1,8 +1,10 @@
 import torch
-from model import MovieShotModel
+from experiment import ShotDataset
 import torch.nn as nn
 import numpy as np
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as T
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
@@ -60,7 +62,7 @@ class Experiment:
 
         checkpoint['iteration'] = iteration
         checkpoint['best_accuracy'] = best_accuracy
-        checkpoint['total_train_loss'] = total_train_loss
+        checkpoint['total_test_loss'] = total_train_loss
 
         checkpoint['model'] = self.model.state_dict()
         checkpoint['optimizer'] = self.optimizer.state_dict()
@@ -72,27 +74,88 @@ class Experiment:
 
         iteration = checkpoint['iteration']
         best_accuracy = checkpoint['best_accuracy']
-        total_train_loss = checkpoint['total_train_loss']
+        total_test_loss = checkpoint['total_train_loss']
 
         self.model.load_state_dict(checkpoint['model'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
 
-        return iteration, best_accuracy, total_train_loss
+        return iteration, best_accuracy, total_test_loss
 
-    def train_iteration(self, x):
+    def train_iteration(self, dataset):
         #x, y = data
         #x = x.to(self.device)
         #y = y.to(self.device)
 
         #logits = self.model(x)
-        kfold = StratifiedKFold(n_splits=5, shuffle=True)
-        logits = cross_val_score(estimator=self.CV_model, X=torch.tensor(x), cv=kfold)
+        #kfold = StratifiedKFold(n_splits=5, shuffle=True)
+        #logits = cross_val_score(estimator=self.CV_model, X=torch.tensor(x), cv=kfold)
 
         #l2_lambda = 0.001
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         #loss = loss + l2_lambda * l2_norm
         
-        return logits.mean()
+        kf = StratifiedKFold(n_splits=5, shuffle=True)
+        normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
+
+        train_transform = T.Compose([
+            T.Resize(256),
+            T.ColorJitter(),
+            T.RandomHorizontalFlip(p=1.0),
+            T.ToTensor(),
+            normalize
+        ])
+
+        eval_transform = T.Compose([
+            T.Resize(256),
+            T.ToTensor(),
+            normalize
+        ])
+        # Loop through each fold
+        for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
+            print(f"Fold {fold + 1}")
+            print("-------")
+
+            # Define the data loaders for the current fold
+            train_loader = DataLoader(
+                dataset=ShotDataset(dataset, train_transform),
+                batch_size=32,
+                shuffle=True,
+                sampler=torch.utils.data.SubsetRandomSampler(train_idx)
+            )
+            test_loader = DataLoader(
+                dataset=ShotDataset(dataset, eval_transform),
+                batch_size=32, 
+                shuffle=False,
+                sampler=torch.utils.data.SubsetRandomSampler(test_idx)
+            )
+
+            # Initialize the model and optimizer
+            # Train the model on the current fold
+            for epoch in range(1, 11):
+                self.model.train()
+                for batch_idx, (data, target) in enumerate(train_loader):
+                    data, target = data.to(self.device), target.to(self.device)
+                    self.optimizer.zero_grad()
+                    output = self.model(data)
+                    loss = nn.functional.nll_loss(output, target)
+                    loss.backward()
+                    self.optimizer.step()
+            # Evaluate the model on the test set
+            self.model.eval()
+            test_loss = 0
+            correct = 0
+            with torch.no_grad():
+                for data, target in test_loader:
+                    data, target = data.to(self.device), target.to(self.device)
+                    output = self.model(data)
+                    test_loss += nn.functional.nll_loss(output, target, reduction="sum").item()
+                    pred = output.argmax(dim=1, keepdim=True)
+                    correct += pred.eq(target.view_as(pred)).sum().item()
+
+            test_loss /= len(test_loader.dataset)
+            test_accuracy = correct / len(test_loader.dataset)
+
+        return test_loss, test_accuracy
 
     def validate(self, loader):
         self.model.eval()
