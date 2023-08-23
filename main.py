@@ -13,14 +13,13 @@ def setup_experiment(opt):
     experiment = Experiment(opt)
     train_examples, test_loader = build_splits()
     #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
-    print(train_examples)
 
     return experiment, train_examples, test_loader
 
 
 def main(opt):
     experiment, train_examples, test_loader = setup_experiment(opt)
-
+    print(train_examples)
     if not opt['test']:  # Skip training if '--test' flag is set   
             
         # Restore last checkpoint
