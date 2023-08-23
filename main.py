@@ -19,7 +19,7 @@ def setup_experiment(opt):
 
 
 def main(opt):
-    experiment, train_examples_x, train_examples_y, test_loader = setup_experiment(opt)
+    experiment, train_examples, test_loader = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
@@ -51,7 +51,7 @@ def main(opt):
 
             if iteration % opt['validate_every'] == 0:
                 # Run validation
-                train_accuracy = experiment.train_iteration(train_examples_x, train_examples_y)
+                train_accuracy = experiment.train_iteration(train_examples)
                 logging.info(
                     f'[VAL - {iteration}] Accuracy: {(100 * train_accuracy):.2f}')
                 if train_accuracy >= best_accuracy:
@@ -63,7 +63,7 @@ def main(opt):
                                             total_train_loss)
             
             else:
-                train_acc = experiment.train_iteration(train_examples_x, train_examples_y)
+                train_acc = experiment.train_iteration(train_examples)
 
             iteration += 1
             if iteration > opt['max_iterations']:
