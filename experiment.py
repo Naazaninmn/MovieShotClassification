@@ -119,13 +119,11 @@ class Experiment:
             train_loader = DataLoader(
                 dataset=ShotDataset(dataset, train_transform),
                 batch_size=32,
-                shuffle=True,
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
             test_loader = DataLoader(
                 dataset=ShotDataset(dataset, eval_transform),
                 batch_size=32, 
-                shuffle=False,
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
