@@ -21,9 +21,9 @@ class ShotDataset(Dataset):
         return len(self.examples)
 
     def __getitem__(self, index):
-        img_path = self.examples[index]
+        img_path, y = self.examples[index]
         x = self.transform(Image.open(img_path).convert('RGB'))
-        return x
+        return x, y
 
 
 def read_lines(data_path):
@@ -106,6 +106,6 @@ def build_splits():
     #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    train_examples_x = ShotDataset(train_examples_x, train_transform)
+    train_examples_x, _ = ShotDataset(train_examples_x, train_transform)
     test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     return train_examples_x, train_examples_y, test_loader
