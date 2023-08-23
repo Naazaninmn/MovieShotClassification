@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score, recall_score, precision_score, confusion_m
 import torch.nn.functional as F
 from pytorch_metric_learning import losses
 from skorch import NeuralNetClassifier
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
 
@@ -94,7 +94,7 @@ class Experiment:
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         #loss = loss + l2_lambda * l2_norm
         
-        kf = StratifiedKFold(n_splits=5, shuffle=True)
+        kf = KFold(n_splits=5, shuffle=True)
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
         train_transform = T.Compose([
