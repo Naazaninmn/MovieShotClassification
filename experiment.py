@@ -120,6 +120,7 @@ class Experiment:
             accuracies = []
             f1s = []
             losses = []
+            accuracy = 0
             count = 0
             loss = 0
             true_lables = []
