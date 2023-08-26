@@ -48,7 +48,7 @@ def main(opt):
                 #     logging.info(
                 #         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
-            test_loss, test_accuracy = experiment.train_iteration(dataset)
+            test_loss, test_accuracy, test_f1 = experiment.train_iteration(dataset)
             total_test_loss += test_loss
             logging.info(
                 f'[TEST - {iteration}] Loss: {test_loss} | Accuracy: {(100 * test_accuracy):.2f}')

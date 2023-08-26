@@ -117,21 +117,37 @@ class Experiment:
                 loss.backward()
                 self.optimizer.step()
             # Evaluate the model on the test set
-            self.model.eval()
-            test_loss = 0
-            correct = 0
+            accuracies = []
+            f1s = []
+            losses = []
+            count = 0
+            loss = 0
+            true_lables = []
+            preds = []
             with torch.no_grad():
-                for data, target in test_loader:
-                    data, target = data.to(self.device), target.to(self.device)
-                    output = self.model(data)
-                    test_loss += nn.functional.nll_loss(output, target, reduction="sum").item()
-                    pred = output.argmax(dim=1, keepdim=True)
-                    correct += pred.eq(target.view_as(pred)).sum().item()
+                for x, y in test_loader:
+                    x = x.to(self.device)
+                    y = y.to(self.device)
+                    true_lables.append(torch.Tensor.cpu(y))
 
-            test_loss /= len(test_loader.dataset)
-            test_accuracy = correct / len(test_loader.dataset)
+                    logits = self.model(x)
+                    loss += self.criterion(logits, y)
+                    pred = torch.argmax(logits, dim=-1)
+                    preds.append(torch.Tensor.cpu(pred))
 
-        return test_loss, test_accuracy
+                    accuracy += (pred == y).sum().item()
+                    count += x.size(0)
+
+            mean_accuracy = accuracy / count
+            accuracies.append(mean_accuracy)
+            mean_loss = loss / count
+            losses.append(mean_loss)
+            true_lables = torch.Tensor(true_lables)
+            preds = torch.Tensor(preds)
+            f1 = f1_score(true_lables, preds, average='macro')
+            f1s.append(f1)
+
+        return np.mean(losses), np.mean(accuracies), np.mean(f1s)
 
     def validate(self, dataset):
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
