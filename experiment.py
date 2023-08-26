@@ -100,8 +100,8 @@ class Experiment:
 
         train_transform = T.Compose([
             T.Resize(256),
-            T.ColorJitter(),
-            T.RandomHorizontalFlip(p=1.0),
+            # T.ColorJitter(),
+            # T.RandomHorizontalFlip(p=1.0),
             T.ToTensor(),
             normalize
         ])
