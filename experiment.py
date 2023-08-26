@@ -113,7 +113,6 @@ class Experiment:
         ])
         
         # Loop through each fold
-        print(dataset)
         for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
             print(f"Fold {fold + 1}")
             print("-------")
