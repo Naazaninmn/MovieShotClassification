@@ -55,7 +55,7 @@ def main(opt):
             if test_accuracy >= best_accuracy:
                 best_accuracy = test_accuracy
                 experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
-                                            best_accuracy, total_train_loss)
+                                            best_accuracy, total_test_loss)
             experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
                                         best_accuracy,
                                         total_test_loss)
