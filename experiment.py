@@ -107,15 +107,15 @@ class Experiment:
 
             # Initialize the model and optimizer
             # Train the model on the current fold
-            for epoch in range(1, 11):
-                self.model.train()
-                for batch_idx, (data, target) in enumerate(train_loader):
-                    data, target = data.to(self.device), target.to(self.device)
-                    self.optimizer.zero_grad()
-                    output = self.model(data)
-                    loss = nn.functional.nll_loss(output, target)
-                    loss.backward()
-                    self.optimizer.step()
+            #for epoch in range(1, 11):
+            self.model.train()
+            for batch_idx, (data, target) in enumerate(train_loader):
+                data, target = data.to(self.device), target.to(self.device)
+                self.optimizer.zero_grad()
+                output = self.model(data)
+                loss = nn.functional.nll_loss(output, target)
+                loss.backward()
+                self.optimizer.step()
             # Evaluate the model on the test set
             self.model.eval()
             test_loss = 0
