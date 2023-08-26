@@ -95,6 +95,7 @@ class Experiment:
         #loss = loss + l2_lambda * l2_norm
         
         kf = KFold(n_splits=5, shuffle=True)
+
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
         train_transform = T.Compose([
@@ -110,6 +111,7 @@ class Experiment:
             T.ToTensor(),
             normalize
         ])
+
         # Loop through each fold
         for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
             print(f"Fold {fold + 1}")
@@ -118,12 +120,12 @@ class Experiment:
             # Define the data loaders for the current fold
             train_loader = DataLoader(
                 dataset=ShotDataset(dataset, train_transform),
-                batch_size=32,
+                batch_size=64,
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
             test_loader = DataLoader(
                 dataset=ShotDataset(dataset, eval_transform),
-                batch_size=32, 
+                batch_size=64, 
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
