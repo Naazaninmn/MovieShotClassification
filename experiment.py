@@ -111,7 +111,7 @@ class Experiment:
             T.ToTensor(),
             normalize
         ])
-
+        
         # Loop through each fold
         for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
             print(f"Fold {fold + 1}")
@@ -120,12 +120,12 @@ class Experiment:
             # Define the data loaders for the current fold
             train_loader = DataLoader(
                 dataset=ShotDataset(dataset, train_transform),
-                batch_size=64,
+                batch_size=32,
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
             test_loader = DataLoader(
                 dataset=ShotDataset(dataset, eval_transform),
-                batch_size=64, 
+                batch_size=32, 
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
@@ -133,6 +133,9 @@ class Experiment:
             # Train the model on the current fold
             #for epoch in range(1, 11):
             self.model.train()
+            x, y = enumerate(train_loader)
+            print(x)
+            print(y)
             for batch_idx, (data, target) in enumerate(train_loader):
                 data, target = data.to(self.device), target.to(self.device)
                 self.optimizer.zero_grad()
