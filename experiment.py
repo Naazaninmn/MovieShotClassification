@@ -113,10 +113,12 @@ class Experiment:
         ])
         
         # Loop through each fold
+        
         for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
             print(f"Fold {fold + 1}")
             print("-------")
-
+            print(train_idx)
+            print(test_idx)
             # Define the data loaders for the current fold
             train_loader = DataLoader(
                 dataset=ShotDataset(dataset, train_transform),

@@ -11,7 +11,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    dataset= build_splits()
+    dataset = build_splits()
     #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
 
     return experiment, dataset
