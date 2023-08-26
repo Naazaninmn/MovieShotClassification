@@ -11,8 +11,6 @@ from pytorch_metric_learning import losses
 from skorch import NeuralNetClassifier
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
-from torchvision.datasets import MNIST
-from torchvision.transforms import ToTensor
 
 
 class SupervisedContrastiveLoss(nn.Module):
@@ -84,7 +82,6 @@ class Experiment:
         return iteration, best_accuracy, total_test_loss
 
     def train_iteration(self, dataset):
-        train_dataset = MNIST(root="data", train=True, download=True, transform=ToTensor())
         #x, y = data
         #x = x.to(self.device)
         #y = y.to(self.device)
@@ -122,13 +119,11 @@ class Experiment:
             
             # Define the data loaders for the current fold
             train_loader = DataLoader(
-                dataset=train_dataset,
-                batch_size=64,
+                dataset=ShotDataset(dataset, train_transform),
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
             test_loader = DataLoader(
-                dataset=train_dataset,
-                batch_size=64, 
+                dataset=ShotDataset(dataset, eval_transform),
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
