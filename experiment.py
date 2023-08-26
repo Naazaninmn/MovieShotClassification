@@ -129,7 +129,6 @@ class Experiment:
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
-            print(train_loader.dataset)
             # Initialize the model and optimizer
             # Train the model on the current fold
             #for epoch in range(1, 11):
