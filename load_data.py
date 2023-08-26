@@ -103,6 +103,5 @@ def build_splits():
     #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    data = ShotDataset(data, train_transform)
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     return data
