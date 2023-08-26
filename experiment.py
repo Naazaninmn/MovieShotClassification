@@ -129,13 +129,11 @@ class Experiment:
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
+            print(train_loader.dataset)
             # Initialize the model and optimizer
             # Train the model on the current fold
             #for epoch in range(1, 11):
             self.model.train()
-            x, y = enumerate(train_loader)
-            print(x)
-            print(y)
             for batch_idx, (data, target) in enumerate(train_loader):
                 data, target = data.to(self.device), target.to(self.device)
                 self.optimizer.zero_grad()
