@@ -23,8 +23,6 @@ class ShotDataset(Dataset):
     def __getitem__(self, index):
         img_path, y = self.examples[index]
         x = self.transform(Image.open(img_path).convert('RGB'))
-        print(x)
-        print(y)
         return x, y
 
 
