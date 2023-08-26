@@ -52,7 +52,7 @@ class Experiment:
 
         iteration = checkpoint['iteration']
         best_accuracy = checkpoint['best_accuracy']
-        total_test_loss = checkpoint['total_train_loss']
+        total_test_loss = checkpoint['total_test_loss']
 
         self.model.load_state_dict(checkpoint['model'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
@@ -133,7 +133,20 @@ class Experiment:
 
         return test_loss, test_accuracy
 
-    def validate(self, loader):
+    def validate(self, dataset):
+        normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
+
+        eval_transform = T.Compose([
+            T.Resize(256),
+            T.ToTensor(),
+            normalize
+        ])
+
+        test_loader = DataLoader(
+            dataset=ShotDataset(dataset, eval_transform),
+            shuffle=False
+        )
+
         self.model.eval()
         accuracy = 0
         count = 0
@@ -141,7 +154,7 @@ class Experiment:
         true_lables = []
         preds = []
         with torch.no_grad():
-            for x, y in loader:
+            for x, y in test_loader:
                 x = x.to(self.device)
                 y = y.to(self.device)
                 true_lables.append(torch.Tensor.cpu(y))
