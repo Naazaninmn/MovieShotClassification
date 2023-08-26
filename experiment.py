@@ -122,12 +122,12 @@ class Experiment:
             
             # Define the data loaders for the current fold
             train_loader = DataLoader(
-                dataset=ShotDataset(train_dataset, train_transform),
+                dataset=train_dataset,
                 batch_size=64,
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
             test_loader = DataLoader(
-                dataset=ShotDataset(train_dataset, eval_transform),
+                dataset=train_dataset,
                 batch_size=64, 
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
