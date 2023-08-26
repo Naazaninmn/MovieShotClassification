@@ -148,7 +148,7 @@ class Experiment:
             f1 = f1_score(true_lables, preds, average='macro')
             f1s.append(f1)
 
-        return np.mean(np.asarray(torch.Tensor.cpu(losses))), np.mean(np.asarray(torch.Tensor.cpu(accuracies))), np.mean(np.asarray(torch.Tensor.cpu(f1s)))
+        return torch.Tensor.mean(torch.Tensor(losses)), torch.Tensor.mean(torch.Tensor(accuracies)), torch.Tensor.mean(torch.Tensor(f1s))
 
     def validate(self, dataset):
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
