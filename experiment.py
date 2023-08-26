@@ -100,8 +100,8 @@ class Experiment:
 
         train_transform = T.Compose([
             T.Resize(256),
-            # T.ColorJitter(),
-            # T.RandomHorizontalFlip(p=1.0),
+            T.ColorJitter(),
+            T.RandomHorizontalFlip(p=1.0),
             T.ToTensor(),
             normalize
         ])
@@ -113,7 +113,7 @@ class Experiment:
         ])
         
         # Loop through each fold
-        
+        print(dataset)
         for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
             print(f"Fold {fold + 1}")
             print("-------")
