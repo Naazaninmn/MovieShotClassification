@@ -113,7 +113,7 @@ class Experiment:
                 data, target = data.to(self.device), target.to(self.device)
                 self.optimizer.zero_grad()
                 output = self.model(data)
-                loss = nn.functional.nll_loss(output, target)
+                loss = self.criterion(output, target)
                 loss.backward()
                 self.optimizer.step()
             # Evaluate the model on the test set

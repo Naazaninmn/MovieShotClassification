@@ -61,8 +61,8 @@ def main(opt):
                                         total_test_loss)
 
             iteration += 1
-            if iteration > opt['max_iterations']:
-                break
+            # if iteration > opt['max_iterations']:
+            #     break
         
 
     """
