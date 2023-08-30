@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as T
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 import torch.nn.functional as F
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 
 
 class Experiment:
@@ -72,7 +72,7 @@ class Experiment:
         #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         #loss = loss + l2_lambda * l2_norm
         
-        kf = KFold(n_splits=5, shuffle=True, random_state=True)
+        kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=True)
 
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
