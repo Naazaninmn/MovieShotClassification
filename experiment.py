@@ -59,7 +59,7 @@ class Experiment:
 
         return iteration, best_accuracy, total_test_loss
 
-    def train_iteration(self, dataset):
+    def train_iteration(self, dataset, X, Y):
         #x, y = data
         #x = x.to(self.device)
         #y = y.to(self.device)
@@ -91,7 +91,7 @@ class Experiment:
         ])
         
         # Loop through each fold
-        for fold, (train_idx, test_idx) in enumerate(kf.split(dataset)):
+        for fold, (train_idx, test_idx) in enumerate(kf.split(X, Y)):
             print(f"Fold {fold + 1}")
             print("-------")
             

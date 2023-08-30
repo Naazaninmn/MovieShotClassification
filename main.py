@@ -18,8 +18,7 @@ def setup_experiment(opt):
 
 
 def main(opt):
-    experiment, dataset = setup_experiment(opt)
-    print(dataset.shape)
+    experiment, dataset, X, Y = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
@@ -49,7 +48,7 @@ def main(opt):
                 #     logging.info(
                 #         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
-            test_loss, test_accuracy, test_f1 = experiment.train_iteration(dataset)
+            test_loss, test_accuracy, test_f1 = experiment.train_iteration(dataset, X, Y)
             total_test_loss += test_loss
             logging.info(
                 f'[TEST - {iteration}] Loss: {test_loss} | Accuracy: {(100 * test_accuracy):.2f}')

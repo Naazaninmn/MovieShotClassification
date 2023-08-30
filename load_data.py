@@ -55,6 +55,8 @@ def build_splits():
     #val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
 
     data = []
+    X = []
+    Y = []
     #test_examples = []
 
     #train_examples_dict = {}
@@ -64,6 +66,8 @@ def build_splits():
         for i, example in enumerate(examples_list):
             # if i > split_idx:
             data.append([example, category_idx]) # each pair is [path_to_img, class_label]
+            X.append(example)
+            Y.append(category_idx)
                 # if category_idx not in train_examples_dict.keys():
                 #     train_examples_dict[category_idx] = [example]
                 # else:
@@ -82,21 +86,21 @@ def build_splits():
     
 
     # Transforms
-    normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
+    # normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
-    train_transform = T.Compose([
-        T.Resize(256),
-        T.ColorJitter(),
-        T.RandomHorizontalFlip(p=1.0),
-        T.ToTensor(),
-        normalize
-    ])
+    # train_transform = T.Compose([
+    #     T.Resize(256),
+    #     T.ColorJitter(),
+    #     T.RandomHorizontalFlip(p=1.0),
+    #     T.ToTensor(),
+    #     normalize
+    # ])
 
-    eval_transform = T.Compose([
-        T.Resize(256),
-        T.ToTensor(),
-        normalize
-    ])
+    # eval_transform = T.Compose([
+    #     T.Resize(256),
+    #     T.ToTensor(),
+    #     normalize
+    # ])
 
     # Dataloaders
     #train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
@@ -105,4 +109,4 @@ def build_splits():
 
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     
-    return data
+    return data, X, Y
