@@ -11,10 +11,10 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    dataset = build_splits()
+    dataset, X, Y = build_splits()
     #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
 
-    return experiment, dataset
+    return experiment, dataset, X, Y
 
 
 def main(opt):
