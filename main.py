@@ -19,6 +19,7 @@ def setup_experiment(opt):
 
 def main(opt):
     experiment, dataset = setup_experiment(opt)
+    print(dataset.shape)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
