@@ -57,24 +57,23 @@ def build_splits():
     data = []
     X = []
     Y = []
-    #test_examples = []
+    test_examples = []
 
     #train_examples_dict = {}
 
     for category_idx, examples_list in examples.items():
-        #split_idx = 1/5 * test_split_length
+        split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
-            # if i > split_idx:
-            data.append([example, category_idx]) # each pair is [path_to_img, class_label]
-            X.append(example)
-            Y.append(category_idx)
+            if i > split_idx:
+                data.append([example, category_idx]) # each pair is [path_to_img, class_label]
+                X.append(example)
+                Y.append(category_idx)
                 # if category_idx not in train_examples_dict.keys():
                 #     train_examples_dict[category_idx] = [example]
                 # else:
                 #     train_examples_dict[category_idx].append(example)
-            # else:
-            #     test_examples.append([example, category_idx]) # each pair is [path_to_img, class_label]
-    
+            else:
+                test_examples.append([example, category_idx]) # each pair is [path_to_img, class_label]
 
     # for category_idx, examples_list in train_examples_dict.items():
     #     split_idx = 1/5 * val_split_length
@@ -109,4 +108,4 @@ def build_splits():
 
     #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
     
-    return data, X, Y
+    return data, X, Y, test_examples

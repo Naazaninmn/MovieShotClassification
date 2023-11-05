@@ -11,14 +11,14 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    dataset, X, Y = build_splits()
+    dataset, X, Y, test_examples = build_splits()
     #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
 
-    return experiment, dataset, X, Y
+    return experiment, dataset, X, Y, test_examples
 
 
 def main(opt):
-    experiment, dataset, X, Y = setup_experiment(opt)
+    experiment, dataset, X, Y, test_examples = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
@@ -71,7 +71,7 @@ def main(opt):
     """
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
-    test_accuracy, _, test_f1, test_cm = experiment.validate( dataset )
+    test_accuracy, _, test_f1, test_cm = experiment.validate( test_examples )
 
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
