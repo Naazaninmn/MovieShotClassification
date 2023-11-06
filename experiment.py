@@ -150,7 +150,7 @@ class Experiment:
 
         return torch.Tensor.mean(torch.Tensor(losses)), torch.Tensor.mean(torch.Tensor(accuracies)), torch.Tensor.mean(torch.Tensor(f1s))
 
-    def validate(self, dataset):
+    def validate(self, dataset, X, Y, test_examples):
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
         train_transform = T.Compose([
@@ -173,7 +173,7 @@ class Experiment:
         ])
 
         test_loader = DataLoader(
-            dataset=ShotDataset(dataset, eval_transform),
+            dataset=ShotDataset(test_examples, eval_transform),
             shuffle=False
         )
 
