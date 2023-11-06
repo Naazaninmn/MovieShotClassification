@@ -111,9 +111,9 @@ class Experiment:
             self.model.train()
             for batch_idx, (data, target) in enumerate(train_loader):
                 data, target = data.to(self.device), target.to(self.device)
-                self.optimizer.zero_grad()
                 output = self.model(data)
                 loss = self.criterion(output, target)
+                self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
             # Evaluate the model on the test set
@@ -178,12 +178,15 @@ class Experiment:
         )
 
         self.model.train()
-        X, Y = X.to(self.device), Y.to(self.device)
-        self.optimizer.zero_grad()
-        output = self.model(X)
-        loss = self.criterion(output, Y)
-        loss.backward()
-        self.optimizer.step()
+        for data in train_loader:
+            X, Y = data
+            X = X.to(self.device)
+            Y = Y.to(self.device)
+            output = self.model(X)
+            loss = self.criterion(output, Y)
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
 
         self.model.eval()
         accuracy = 0
