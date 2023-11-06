@@ -71,7 +71,8 @@ def main(opt):
     """
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
-    test_accuracy, _, test_f1, test_cm = experiment.validate( test_examples )
+
+    test_accuracy, _, test_f1, test_cm = experiment.validate( dataset, X, Y, test_examples )
 
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)

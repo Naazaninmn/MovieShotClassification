@@ -153,6 +153,19 @@ class Experiment:
     def validate(self, dataset):
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
+        train_transform = T.Compose([
+            T.Resize(256),
+            T.ColorJitter(),
+            T.RandomHorizontalFlip(p=1.0),
+            T.ToTensor(),
+            normalize
+        ])
+
+        train_loader = DataLoader(
+                dataset=ShotDataset(dataset, train_transform), 
+                shuffle=True
+            )
+
         eval_transform = T.Compose([
             T.Resize(256),
             T.ToTensor(),
@@ -163,6 +176,14 @@ class Experiment:
             dataset=ShotDataset(dataset, eval_transform),
             shuffle=False
         )
+
+        self.model.train()
+        X, Y = X.to(self.device), Y.to(self.device)
+        self.optimizer.zero_grad()
+        output = self.model(X)
+        loss = self.criterion(output, Y)
+        loss.backward()
+        self.optimizer.step()
 
         self.model.eval()
         accuracy = 0
