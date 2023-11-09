@@ -49,9 +49,9 @@ def build_splits():
     total_examples = 600
 
     # Build splits
-    train_split_length = total_examples * 5/6  # 5/6 of the training split used for validation
-    test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
-    val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
+    train_split_length = total_examples * 525/600  # 5/6 of the training split used for validation
+    test_split_length = total_examples * 100/625  # 1/6 of the training split used for validation
+    val_split_length = train_split_length * 100/525  # 20% of the training split used for validation
 
     train_examples = []
     val_examples = []
