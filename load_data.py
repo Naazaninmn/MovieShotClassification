@@ -64,7 +64,7 @@ def build_splits():
     for category_idx, examples_list in examples.items():
         split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
-            if i > split_idx:
+            if i >= split_idx:
                 data.append([example, category_idx]) # each pair is [path_to_img, class_label]
                 X.append(example)
                 Y.append(category_idx)
@@ -74,7 +74,7 @@ def build_splits():
                 #     train_examples_dict[category_idx].append(example)
             else:
                 test_examples.append([example, category_idx]) # each pair is [path_to_img, class_label]
-    print(len(data))
+    print(len(test_examples))
     # for category_idx, examples_list in train_examples_dict.items():
     #     split_idx = 1/5 * val_split_length
     #     for i, example in enumerate(examples_list):
