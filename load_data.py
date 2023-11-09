@@ -47,11 +47,11 @@ def read_lines(data_path):
 def build_splits():
 
     examples = read_lines('Data')
-    random.shuffle(examples["CloseUp"])
-    random.shuffle(examples["MediumCloseUp"])
-    random.shuffle(examples["MediumShot"])
-    random.shuffle(examples["MediumLongShot"])
-    random.shuffle(examples["LongShot"])
+    random.shuffle(examples[0])
+    random.shuffle(examples[1])
+    random.shuffle(examples[2])
+    random.shuffle(examples[3])
+    random.shuffle(examples[4])
     total_examples = 625
 
     # Build splits
