@@ -3,27 +3,6 @@ from model import MovieShotModel
 import torch.nn as nn
 from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
-import torch.nn.functional as F
-from pytorch_metric_learning import losses
-
-
-class SupervisedContrastiveLoss(nn.Module):
-    def __init__(self, temperature=0.1):
-        super(SupervisedContrastiveLoss, self).__init__()
-        self.temperature = temperature
-
-    def forward(self, logits, labels):
-        #logits_normalized = F.normalize(logits, p=2, dim=1)
-        logits = torch.div(
-            torch.matmul(
-                logits, torch.transpose(logits, 0, 1)
-            ),
-            self.temperature,
-        )
-        print(logits)
-        print(labels)
-
-        return losses.NTXentLoss(temperature=0.07)(torch.flatten(logits), labels)
 
 
 class Experiment:
