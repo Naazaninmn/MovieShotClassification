@@ -76,7 +76,7 @@ def main(opt):
     plt.savefig("cm.jpg")
 
     logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
-    logging.info(f'[TEST] F1-score best: {(100 * test_f1):.2f}')
+    logging.info(f'[TEST] F1-score best: {(test_f1):.2f}')
 
 
 if __name__ == '__main__':
