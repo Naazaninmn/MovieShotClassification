@@ -3,7 +3,6 @@ import os
 from experiment import Experiment
 from load_data import build_splits
 from parse_args import parse_arguments
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 
@@ -11,14 +10,13 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    dataset, X, Y, test_examples = build_splits()
-    #data = np.hstack((np.array(train_examples_x), np.array(train_examples_y)))
+    train_loader, validation_loader, test_loader = build_splits()
 
-    return experiment, dataset, X, Y, test_examples
+    return experiment, train_loader, validation_loader, test_loader
 
 
 def main(opt):
-    experiment, dataset, X, Y, test_examples = setup_experiment(opt)
+    experiment, train_loader, validation_loader, test_loader = setup_experiment(opt)
 
     if not opt['test']:  # Skip training if '--test' flag is set   
             
@@ -32,37 +30,32 @@ def main(opt):
         # Train loop
         iteration = 0
         best_accuracy = 0
-        total_test_loss = 0
-        # train_loader_iterator = iter(train_loader)
-        
+        total_train_loss = 0
         while iteration < opt['max_iterations']:
-            # try:
-            #     data = next(train_loader_iterator)
-            # except StopIteration:
-            #     train_loader_iterator = iter(train_loader)
-            #     data = next(train_loader_iterator)
+            for data in train_loader:
 
-            #for data in train_loader:
+                total_train_loss += experiment.train_iteration(data)
 
-                # if iteration % opt['print_every'] == 0:
-                #     logging.info(
-                #         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
+                if iteration % opt['print_every'] == 0:
+                    logging.info(
+                        f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
-            test_loss, test_accuracy, test_f1 = experiment.train_iteration(dataset, X, Y)
-            total_test_loss += test_loss
-            logging.info(
-                f'[TEST - {iteration}] Loss: {test_loss} | Accuracy: {(100 * test_accuracy):.2f}')
-            if test_accuracy >= best_accuracy:
-                best_accuracy = test_accuracy
-                experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
-                                            best_accuracy, total_test_loss)
-            experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
-                                        best_accuracy,
-                                        total_test_loss)
+                if iteration % opt['validate_every'] == 0:
+                    # Run validation
+                    val_accuracy, val_loss, _, _ = experiment.validate( validation_loader )
+                    logging.info(
+                        f'[VAL - {iteration}] Loss: {val_loss} | Accuracy: {(100 * val_accuracy):.2f}')
+                    if val_accuracy >= best_accuracy:
+                        best_accuracy = val_accuracy
+                        experiment.save_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth', iteration,
+                                                    best_accuracy, total_train_loss)
+                    experiment.save_checkpoint(f'{opt["output_path"]}/last_checkpoint.pth', iteration,
+                                                best_accuracy,
+                                                total_train_loss)
 
-            iteration += 1
-            # if iteration > opt['max_iterations']:
-            #     break
+                iteration += 1
+                if iteration > opt['max_iterations']:
+                    break
         
 
     """
@@ -71,8 +64,7 @@ def main(opt):
     """
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
-
-    test_accuracy, _, test_f1, test_cm = experiment.validate( dataset, X, Y, test_examples )
+    test_accuracy, _, test_f1, test_cm = experiment.validate( test_loader )
 
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
@@ -84,7 +76,7 @@ def main(opt):
     plt.savefig("cm.jpg")
 
     logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
-    logging.info(f'[TEST] F1-score best: {(test_f1):.2f}')
+    logging.info(f'[TEST] F1-score best: {(100 * test_f1):.2f}')
 
 
 if __name__ == '__main__':

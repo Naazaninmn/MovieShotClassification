@@ -1,7 +1,6 @@
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as T
-import numpy as np
 
 CATEGORIES = {
     'CloseUp': 0,
@@ -52,60 +51,54 @@ def build_splits():
     # Build splits
     train_split_length = total_examples * 5/6  # 5/6 of the training split used for validation
     test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
-    #val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
+    val_split_length = train_split_length * 0.2  # 20% of the training split used for validation
 
-    data = []
-    X = []
-    Y = []
+    train_examples = []
+    val_examples = []
     test_examples = []
 
-    #train_examples_dict = {}
+    train_examples_dict = {}
 
     for category_idx, examples_list in examples.items():
         split_idx = 1/5 * test_split_length
         for i, example in enumerate(examples_list):
             if i >= split_idx:
-                data.append([example, category_idx]) # each pair is [path_to_img, class_label]
-                X.append(example)
-                Y.append(category_idx)
-                # if category_idx not in train_examples_dict.keys():
-                #     train_examples_dict[category_idx] = [example]
-                # else:
-                #     train_examples_dict[category_idx].append(example)
+                if category_idx not in train_examples_dict.keys():
+                    train_examples_dict[category_idx] = [example]
+                else:
+                    train_examples_dict[category_idx].append(example)
             else:
-                test_examples.append([example, category_idx]) # each pair is [path_to_img, class_label]
-    print(len(test_examples))
-    # for category_idx, examples_list in train_examples_dict.items():
-    #     split_idx = 1/5 * val_split_length
-    #     for i, example in enumerate(examples_list):
-    #         if i > split_idx:
-    #             train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
-    #         else:
-    #             val_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+                test_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+
+    for category_idx, examples_list in train_examples_dict.items():
+        split_idx = 1/5 * val_split_length
+        for i, example in enumerate(examples_list):
+            if i >= split_idx:
+                train_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
+            else:
+                val_examples.append([example, category_idx])  # each pair is [path_to_img, class_label]
     
 
     # Transforms
-    # normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
+    normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
-    # train_transform = T.Compose([
-    #     T.Resize(256),
-    #     T.ColorJitter(),
-    #     T.RandomHorizontalFlip(p=1.0),
-    #     T.ToTensor(),
-    #     normalize
-    # ])
+    train_transform = T.Compose([
+        T.Resize(256),
+        T.ColorJitter(),
+        T.RandomHorizontalFlip(p=1.0),
+        T.ToTensor(),
+        normalize
+    ])
 
-    # eval_transform = T.Compose([
-    #     T.Resize(256),
-    #     T.ToTensor(),
-    #     normalize
-    # ])
+    eval_transform = T.Compose([
+        T.Resize(256),
+        T.ToTensor(),
+        normalize
+    ])
 
     # Dataloaders
-    #train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
-    #val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
-    #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
+    train_loader = DataLoader(ShotDataset(train_examples, train_transform), shuffle=True)
+    val_loader = DataLoader(ShotDataset(val_examples, eval_transform), shuffle=False)
+    test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
 
-    #test_loader = DataLoader(ShotDataset(test_examples, eval_transform), shuffle=False)
-    
-    return data, X, Y, test_examples
+    return train_loader, val_loader, test_loader
