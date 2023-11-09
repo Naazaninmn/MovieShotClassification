@@ -1,6 +1,7 @@
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as T
+import random
 
 CATEGORIES = {
     'CloseUp': 0,
@@ -46,10 +47,15 @@ def read_lines(data_path):
 def build_splits():
 
     examples = read_lines('Data')
-    total_examples = 600
+    random.shuffle(examples["CloseUp"])
+    random.shuffle(examples["MediumCloseUp"])
+    random.shuffle(examples["MediumShot"])
+    random.shuffle(examples["MediumLongShot"])
+    random.shuffle(examples["LongShot"])
+    total_examples = 625
 
     # Build splits
-    train_split_length = total_examples * 525/600  # 5/6 of the training split used for validation
+    train_split_length = total_examples * 525/625  # 5/6 of the training split used for validation
     test_split_length = total_examples * 100/625  # 1/6 of the training split used for validation
     val_split_length = train_split_length * 100/525  # 20% of the training split used for validation
 
