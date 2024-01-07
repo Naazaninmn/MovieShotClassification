@@ -32,11 +32,7 @@ class Experiment:
         for param in self.model.features[-3].parameters():
             param.requires_grad = True
         
-        for param in self.model.linear[0].parameters():
-            param.requires_grad = True
-        for param in self.model.features[1].parameters():
-            param.requires_grad = True
-        for param in self.model.features[2].parameters():
+        for param in self.model.classifier.parameters():
             param.requires_grad = True
 
         # Setup optimization procedure

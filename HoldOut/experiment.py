@@ -16,7 +16,7 @@ class Experiment:
         self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
         self.model.train()
         self.model.to(self.device)
-        for param in self.model.parameters():
+        for param in self.model.features.parameters():
             param.requires_grad = False
         
         for param in self.model.features[-1].parameters():
@@ -26,11 +26,7 @@ class Experiment:
         for param in self.model.features[-3].parameters():
             param.requires_grad = True
         
-        for param in self.model.linear[0].parameters():
-            param.requires_grad = True
-        for param in self.model.features[1].parameters():
-            param.requires_grad = True
-        for param in self.model.features[2].parameters():
+        for param in self.model.classifier.parameters():
             param.requires_grad = True
 
         # Setup optimization procedure
