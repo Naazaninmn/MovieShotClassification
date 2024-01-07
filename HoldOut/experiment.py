@@ -25,6 +25,13 @@ class Experiment:
             param.requires_grad = True
         for param in self.model.features[-3].parameters():
             param.requires_grad = True
+        
+        for param in self.model.linear[0].parameters():
+            param.requires_grad = True
+        for param in self.model.features[1].parameters():
+            param.requires_grad = True
+        for param in self.model.features[2].parameters():
+            param.requires_grad = True
 
         # Setup optimization procedure
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
