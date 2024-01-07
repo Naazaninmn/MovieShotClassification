@@ -65,10 +65,6 @@ class Experiment:
         return iteration, best_accuracy, total_test_loss
 
     def train_iteration(self, dataset, X, Y):
-
-        #l2_lambda = 0.001
-        #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
-        #loss = loss + l2_lambda * l2_norm
         
         kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=True)
 
@@ -111,6 +107,19 @@ class Experiment:
                 data, target = data.to(self.device), target.to(self.device)
                 output = self.model(data)
                 loss = self.criterion(output, target)
+
+                #L2 regularization
+                #l2_lambda = 0.01
+                #l2_lambda = 0.001
+                #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
+                #loss = loss + l2_lambda * l2_norm
+
+                #L1 regularization 
+                #l1_lambda = 0.01
+                #l1_lambda = 0.001
+                #l1_norm = sum(abs(p) for p in self.model.parameters())
+                #loss = loss + l1_lambda * l1_norm
+
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
