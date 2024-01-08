@@ -22,18 +22,12 @@ class Experiment:
         self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
         self.model.train()
         self.model.to(self.device)
-        for param in self.model.parameters():
-            param.requires_grad = False
-        
-        for param in self.model.features[-1].parameters():
-            param.requires_grad = True
-        for param in self.model.features[-2].parameters():
-            param.requires_grad = True
-        for param in self.model.features[-3].parameters():
+        for param in self.model.features.parameters():
             param.requires_grad = True
         
-        for param in self.model.classifier.parameters():
-            param.requires_grad = True
+        for i in range(4):
+            for param in self.model.features[i].parameters():
+                param.requires_grad = False
 
         # Setup optimization procedure
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
