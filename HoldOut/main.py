@@ -42,7 +42,7 @@ def main(opt):
 
                 if iteration % opt['validate_every'] == 0:
                     # Run validation
-                    val_accuracy, val_loss, _, _ = experiment.validate( validation_loader )
+                    val_accuracy, val_loss, _, _, _, _ = experiment.validate( validation_loader )
                     logging.info(
                         f'[VAL - {iteration}] Loss: {val_loss} | Accuracy: {(100 * val_accuracy):.2f}')
                     if val_accuracy >= best_accuracy:
