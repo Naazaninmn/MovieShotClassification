@@ -3,7 +3,7 @@ import torch
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--lr', type=float, default=1e-6)
     parser.add_argument('--max_iterations', type=int, default=5000)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--num_workers', type=int, default=1)
