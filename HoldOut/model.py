@@ -29,19 +29,19 @@ class ResNetModel( nn.Module ):
         self.feature_extractor = FeatureExtractor()
 
         self.category_encoder = nn.Sequential(
-            nn.Linear( 256, 256 ),
-            nn.BatchNorm1d( 256 ),
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
             nn.ReLU(),
 
-            nn.Linear( 256, 256 ),
-            nn.BatchNorm1d( 256 ),
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
             nn.ReLU(),
 
-            nn.Linear( 256, 256 ),
-            nn.BatchNorm1d( 256 ),
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
             nn.ReLU()
         )
-        self.classifier = nn.Linear( 256, 5 )
+        self.classifier = nn.Linear( 512, 5 )
 
     def forward(self, x):
         x = self.feature_extractor( x )
