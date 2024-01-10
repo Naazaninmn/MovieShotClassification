@@ -13,6 +13,7 @@ class Experiment:
 
         # Setup model
         self.model = vgg19_bn(pretrained=True)
+        self.model.classifier[-1] = nn.Linear(in_features=512, out_features=5)
         #self.model = resnet18(pretrained=True)
         #self.model.fc.out_features = 5
         self.model.train()
