@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18, resnet50
+from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 from model import ResNetModel
 
