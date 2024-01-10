@@ -66,14 +66,14 @@ def main(opt):
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
     test_accuracy, _, test_f1, test_precision, test_recall, test_cm = experiment.validate( test_loader )
 
-    # labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
-    # cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
-    # fig, ax = plt.subplots(figsize=(10, 10))
-    # cmd.plot(ax=ax, cmap=plt.cm.Blues)
-    # ax.set_title('Confusion Matrix for Movie Shot Classification')
-    # ax.set_xticklabels(labels)
-    # ax.set_yticklabels(labels)
-    # plt.savefig("cm.jpg")
+    labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
+    cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
+    fig, ax = plt.subplots(figsize=(10, 10))
+    cmd.plot(ax=ax, cmap=plt.cm.Blues)
+    ax.set_title('Confusion Matrix for Movie Shot Classification')
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+    plt.savefig("cm.jpg")
 
     logging.info(f'[TEST] Accuracy best: {(100 * test_accuracy):.2f}')
     logging.info(f'[TEST] F1-score best: {(test_f1):.2f}')
