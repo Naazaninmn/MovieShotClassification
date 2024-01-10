@@ -1,5 +1,6 @@
 import torch.nn as nn
 from torchvision.models import resnet18
+import clip
 
 
 class FeatureExtractor( nn.Module ):
@@ -23,14 +24,29 @@ class FeatureExtractor( nn.Module ):
         return x
 
 
-class MovieShotModel( nn.Module ):
+class ResNetModel( nn.Module ):
     def __init__(self):
-        super( MovieShotModel, self ).__init__()
+        super( ResNetModel, self ).__init__()
         self.feature_extractor = FeatureExtractor()
+
+        self.category_encoder = nn.Sequential(
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU(),
+
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU(),
+
+            nn.Linear( 512, 512 ),
+            nn.BatchNorm1d( 512 ),
+            nn.ReLU()
+        )
         self.classifier = nn.Linear( 512, 5 )
 
     def forward(self, x):
         x = self.feature_extractor( x )
+        x = self.category_encoder( x )
         x = self.classifier( x )
 
         return x
