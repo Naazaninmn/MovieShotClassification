@@ -65,9 +65,9 @@ class Experiment:
 
         #L2 regularization
         #l2_lambda = 0.01
-        #l2_lambda = 0.001
-        #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
-        #loss = loss + l2_lambda * l2_norm
+        l2_lambda = 0.001
+        l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
+        loss = loss + l2_lambda * l2_norm
 
         #L1 regularization 
         #l1_lambda = 0.01
