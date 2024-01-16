@@ -72,7 +72,7 @@ class Experiment:
         #L1 regularization 
         # l1_lambda = 0.01
         l1_lambda = 0.001
-        l1_norm = sum(abs(p) for p in self.model.parameters())
+        l1_norm = sum(abs(p).sum() for p in self.model.parameters())
         loss = loss + l1_lambda * l1_norm
 
         self.optimizer.zero_grad()
