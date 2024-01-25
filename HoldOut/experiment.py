@@ -13,7 +13,7 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        self.model = vgg19(pretrained=True)
+        self.model = vgg16(pretrained=True)
         self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
         # self.model = resnet50(pretrained=True)
         # self.model.fc.out_features = 5
@@ -70,8 +70,8 @@ class Experiment:
         # loss = loss + l2_lambda * l2_norm
 
         #L1 regularization 
-        l1_lambda = 0.01
-        #l1_lambda = 0.001
+        # l1_lambda = 0.01
+        l1_lambda = 0.001
         l1_norm = sum(abs(p).sum() for p in self.model.parameters())
         loss = loss + l1_lambda * l1_norm
 
