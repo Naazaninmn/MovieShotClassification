@@ -13,18 +13,18 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        self.model = vgg19_bn(pretrained=True)
-        self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
-        # self.model = resnet50(pretrained=True)
-        # self.model.fc.out_features = 5
+        # self.model = vgg19_bn(pretrained=True)
+        # self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
+        self.model = resnet50(pretrained=True)
+        self.model.fc.out_features = 5
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():
             param.requires_grad = True
         
-        for i in range(4):
-            for param in self.model.features[i].parameters():
-                param.requires_grad = False
+        # for i in range(4):
+        #     for param in self.model.features[i].parameters():
+        #         param.requires_grad = False
 
         # Setup optimization procedure
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
