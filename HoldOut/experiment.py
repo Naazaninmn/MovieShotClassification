@@ -15,7 +15,7 @@ class Experiment:
         # Setup model
         # self.model = vgg19_bn(pretrained=True)
         # self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
-        self.model = resnet50(pretrained=True)
+        self.model = resnet101(pretrained=True)
         self.model.fc.out_features = 5
         self.model.train()
         self.model.to(self.device)
