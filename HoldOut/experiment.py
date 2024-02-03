@@ -13,18 +13,18 @@ class Experiment:
         self.device = torch.device('cpu' if opt['cpu'] else 'cuda:0')
 
         # Setup model
-        # self.model = vgg19_bn(pretrained=True)
-        # self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
-        self.model = resnet101(pretrained=True)
-        self.model.fc.out_features = 5
+        self.model = vgg19(pretrained=True)
+        self.model.classifier[-1] = nn.Linear(in_features=4096, out_features=5)
+        # self.model = resnet101(pretrained=True)
+        # self.model.fc.out_features = 5
         self.model.train()
         self.model.to(self.device)
         for param in self.model.parameters():
             param.requires_grad = True
         
-        # for i in range(4):
-        #     for param in self.model.features[i].parameters():
-        #         param.requires_grad = False
+        for i in range(4):
+            for param in self.model.features[i].parameters():
+                param.requires_grad = False
 
         # Setup optimization procedure
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=opt['lr'])
@@ -63,13 +63,13 @@ class Experiment:
         logits = self.model(x)
         loss = self.criterion(logits, y)
 
-        #L2 regularization
+        # L2 regularization
         # l2_lambda = 0.01
         l2_lambda = 0.001
         l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
         loss = loss + l2_lambda * l2_norm
 
-        #L1 regularization 
+        # L1 regularization 
         # l1_lambda = 0.01
         # l1_lambda = 0.001
         # l1_norm = sum(abs(p).sum() for p in self.model.parameters())
