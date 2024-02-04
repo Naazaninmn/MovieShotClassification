@@ -104,15 +104,15 @@ class Experiment:
 
                 # L2 regularization
                 # l2_lambda = 0.01
-                l2_lambda = 0.001
-                l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
-                loss = loss + l2_lambda * l2_norm
+                # l2_lambda = 0.001
+                # l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
+                # loss = loss + l2_lambda * l2_norm
 
                 # L1 regularization 
                 # l1_lambda = 0.01
-                # l1_lambda = 0.001
-                # l1_norm = sum(abs(p).sum() for p in self.model.parameters())
-                # loss = loss + l1_lambda * l1_norm
+                l1_lambda = 0.001
+                l1_norm = sum(abs(p).sum() for p in self.model.parameters())
+                loss = loss + l1_lambda * l1_norm
 
                 self.optimizer.zero_grad()
                 loss.backward()
