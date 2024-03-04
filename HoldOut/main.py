@@ -18,9 +18,9 @@ def setup_experiment(opt):
 def main(opt):
     experiment, train_loader, validation_loader, test_loader = setup_experiment(opt)
 
-    if not opt['test']:  # Skip training if '--test' flag is set   
+    if not opt['test']:  
             
-        # Restore last checkpoint
+        # Restoring last checkpoint
         if os.path.exists( f'{opt["output_path"]}/last_checkpoint.pth' ):
             iteration, best_accuracy, total_train_loss = experiment.load_checkpoint(
                 f'{opt["output_path"]}/last_checkpoint.pth' )
@@ -41,7 +41,7 @@ def main(opt):
                         f'[TRAIN - {iteration}] Loss: {total_train_loss / (iteration + 1)}')
 
                 if iteration % opt['validate_every'] == 0:
-                    # Run validation
+                    # Running validation
                     val_accuracy, val_loss, _, _, _, _ = experiment.validate( validation_loader )
                     logging.info(
                         f'[VAL - {iteration}] Loss: {val_loss} | Accuracy: {(100 * val_accuracy):.2f}')
@@ -58,14 +58,12 @@ def main(opt):
                     break
         
 
-    """
-    1)We use the best model(s) on the validation set on the test set
-    2)If the experiment is clip_disentangle, we also use 4 next best models
-    """
+    # The best model on the validation set is used on the test set
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
     test_accuracy, _, test_f1, test_precision, test_recall, test_cm = experiment.validate( test_loader )
 
+    # plotting confusion matrix
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
     fig, ax = plt.subplots(figsize=(10, 10))

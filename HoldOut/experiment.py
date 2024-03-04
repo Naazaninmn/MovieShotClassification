@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18, resnet50, resnet101
+from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet50, resnet101
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
-from model import ResNetModel
 
 
 class Experiment:
@@ -22,6 +21,7 @@ class Experiment:
         for param in self.model.parameters():
             param.requires_grad = True
         
+        # freezing the first four layers
         for i in range(4):
             for param in self.model.features[i].parameters():
                 param.requires_grad = False
@@ -56,6 +56,7 @@ class Experiment:
         return iteration, best_accuracy, total_train_loss
 
     def train_iteration(self, data):
+        # training the model on training data
         x, y = data
         x = x.to(self.device)
         y = y.to(self.device)
@@ -65,9 +66,9 @@ class Experiment:
 
         # L2 regularization
         # l2_lambda = 0.01
-        l2_lambda = 0.001
-        l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
-        loss = loss + l2_lambda * l2_norm
+        #l2_lambda = 0.001
+        #l2_norm = sum(p.pow(2.0).sum() for p in self.model.parameters())
+        #loss = loss + l2_lambda * l2_norm
 
         # L1 regularization 
         # l1_lambda = 0.01
@@ -82,6 +83,7 @@ class Experiment:
         return loss.item()
 
     def validate(self, loader):
+        # evaluating the model on test data
         self.model.eval()
         accuracy = 0
         count = 0

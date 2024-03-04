@@ -2,11 +2,10 @@ import torch
 from load_data import ShotDataset
 import torch.nn as nn
 import numpy as np
-from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet18
+from torchvision.models import vgg16, vgg16_bn, vgg19, vgg19_bn, resnet50, resnet101
 from torch.utils.data import DataLoader
 import torchvision.transforms as T
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
-import torch.nn.functional as F
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -25,6 +24,7 @@ class Experiment:
         for param in self.model.parameters():
             param.requires_grad = True
         
+        # freezing the first four layers
         for i in range(4):
             for param in self.model.features[i].parameters():
                 param.requires_grad = False
@@ -58,12 +58,13 @@ class Experiment:
 
         return iteration, best_accuracy, total_test_loss
 
-    def train_iteration(self, dataset, X, Y):
+    def train_iteration(self, train_examples, X, Y):
         
         kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=True)
 
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
+        # training folds transformations
         train_transform = T.Compose([
             T.Resize(256),
             T.ColorJitter(),
@@ -72,6 +73,7 @@ class Experiment:
             normalize
         ])
 
+        # validation fold transformations
         eval_transform = T.Compose([
             T.Resize(256),
             T.ToTensor(),
@@ -83,19 +85,17 @@ class Experiment:
             print(f"Fold {fold + 1}")
             print("-------")
             
-            # Define the data loaders for the current fold
+            # Defining the data loaders for the current fold
             train_loader = DataLoader(
-                dataset=ShotDataset(dataset, train_transform),
+                dataset=ShotDataset(train_examples, train_transform),
                 sampler=torch.utils.data.SubsetRandomSampler(train_idx)
             )
-            test_loader = DataLoader(
-                dataset=ShotDataset(dataset, eval_transform),
+            val_loader = DataLoader(
+                dataset=ShotDataset(train_examples, eval_transform),
                 sampler=torch.utils.data.SubsetRandomSampler(test_idx)
             )
 
-            # Initialize the model and optimizer
-            # Train the model on the current fold
-            #for epoch in range(1, 11):
+            # Training the model on the current fold
             self.model.train()
             for batch_idx, (data, target) in enumerate(train_loader):
                 data, target = data.to(self.device), target.to(self.device)
@@ -110,14 +110,15 @@ class Experiment:
 
                 # L1 regularization 
                 # l1_lambda = 0.01
-                l1_lambda = 0.001
-                l1_norm = sum(abs(p).sum() for p in self.model.parameters())
-                loss = loss + l1_lambda * l1_norm
+                #l1_lambda = 0.001
+                #l1_norm = sum(abs(p).sum() for p in self.model.parameters())
+                #loss = loss + l1_lambda * l1_norm
 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
-            # Evaluate the model on the test set
+
+            # Evaluating the model on the validation fold
             accuracies = []
             f1s = []
             losses = []
@@ -127,7 +128,7 @@ class Experiment:
             true_lables = []
             preds = []
             with torch.no_grad():
-                for x, y in test_loader:
+                for x, y in val_loader:
                     x = x.to(self.device)
                     y = y.to(self.device)
                     true_lables.append(torch.Tensor.cpu(y))
@@ -151,9 +152,10 @@ class Experiment:
 
         return torch.Tensor.mean(torch.Tensor(losses)), torch.Tensor.mean(torch.Tensor(accuracies)), torch.Tensor.mean(torch.Tensor(f1s))
 
-    def validate(self, dataset, X, Y, test_examples):
+    def validate(self, train_examples, X, Y, test_examples):
         normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
 
+        # training data transformations
         train_transform = T.Compose([
             T.Resize(256),
             T.ColorJitter(),
@@ -163,10 +165,11 @@ class Experiment:
         ])
 
         train_loader = DataLoader(
-                dataset=ShotDataset(dataset, train_transform), 
+                dataset=ShotDataset(train_examples, train_transform), 
                 shuffle=True
             )
 
+        # test data transformations
         eval_transform = T.Compose([
             T.Resize(256),
             T.ToTensor(),
@@ -178,6 +181,7 @@ class Experiment:
             shuffle=False
         )
 
+        # re-training the model on the whole training data
         self.model.train()
         for data in train_loader:
             X, Y = data
@@ -189,6 +193,7 @@ class Experiment:
             loss.backward()
             self.optimizer.step()
 
+        # evaluating the model on test data
         self.model.eval()
         accuracy = 0
         count = 0

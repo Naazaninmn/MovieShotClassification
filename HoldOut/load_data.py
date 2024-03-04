@@ -55,9 +55,9 @@ def build_splits():
     total_examples = 625
 
     # Build splits
-    train_split_length = total_examples * 525/625  # 5/6 of the training split used for validation
-    test_split_length = total_examples * 100/625  # 1/6 of the training split used for validation
-    val_split_length = train_split_length * 100/525  # 20% of the training split used for validation
+    train_split_length = total_examples * 525/625  
+    test_split_length = total_examples * 100/625  
+    val_split_length = train_split_length * 100/525  
 
     train_examples = []
     val_examples = []
@@ -66,7 +66,7 @@ def build_splits():
     train_examples_dict = {}
 
     for category_idx, examples_list in examples.items():
-        split_idx = 1/5 * test_split_length
+        split_idx = 1/5 * test_split_length # 1/5 because the number of classes is 5
         for i, example in enumerate(examples_list):
             if i >= split_idx:
                 if category_idx not in train_examples_dict.keys():
@@ -86,8 +86,9 @@ def build_splits():
     
 
     # Transforms
-    normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # VGG-16 - ImageNet Normalization
+    normalize = T.Normalize([0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) 
 
+    # training data transformations
     train_transform = T.Compose([
         T.Resize(256),
         T.ColorJitter(),
@@ -96,6 +97,7 @@ def build_splits():
         normalize
     ])
 
+    # validation and test data transformations
     eval_transform = T.Compose([
         T.Resize(256),
         T.ToTensor(),

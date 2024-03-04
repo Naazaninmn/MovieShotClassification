@@ -50,7 +50,7 @@ def build_splits():
     total_examples = 600
 
     # Build splits
-    test_split_length = total_examples * 1/6  # 1/6 of the training split used for validation
+    test_split_length = total_examples * 100/625 
 
     data = []
     X = []
@@ -58,7 +58,7 @@ def build_splits():
     test_examples = []
 
     for category_idx, examples_list in examples.items():
-        split_idx = 1/5 * test_split_length
+        split_idx = 1/5 * test_split_length # 1/5 because the number of classes is 5
         for i, example in enumerate(examples_list):
             if i >= split_idx:
                 data.append([example, category_idx]) # each pair is [path_to_img, class_label]

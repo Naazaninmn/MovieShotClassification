@@ -3,7 +3,7 @@ import torch
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--lr', type=float, default=1e-6)
     parser.add_argument('--max_iterations', type=int, default=5000)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--num_workers', type=int, default=1)
@@ -16,14 +16,11 @@ def parse_arguments():
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--test', action='store_true')
     
-    # Additional arguments can go below this line:
-    #parser.add_argument('--test', type=str, default='some default value', help='some hint that describes the effect')
-
     # Build options dict
     opt = vars(parser.parse_args())
 
     if not opt['cpu']:
-        assert torch.cuda.is_available(), 'You need a CUDA capable device in order to run this experiment. See `--cpu` flag.'
+        assert torch.cuda.is_available(), 'a CUDA capable device is needed for running this experiment'
 
     opt['output_path'] = f'{opt["output_path"]}/record'
 

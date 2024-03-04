@@ -1,1 +1,1 @@
-# MovieShotClassification
+# Hold-Out Approach

@@ -11,17 +11,17 @@ from sklearn.metrics import ConfusionMatrixDisplay
 def setup_experiment(opt):
 
     experiment = Experiment(opt)
-    dataset, X, Y, test_examples = build_splits()
+    train_examples, X, Y, test_examples = build_splits()
 
-    return experiment, dataset, X, Y, test_examples
+    return experiment, train_examples, X, Y, test_examples
 
 
 def main(opt):
-    experiment, dataset, X, Y, test_examples = setup_experiment(opt)
+    experiment, train_examples, X, Y, test_examples = setup_experiment(opt)
 
-    if not opt['test']:  # Skip training if '--test' flag is set   
+    if not opt['test']: 
             
-        # Restore last checkpoint
+        # Restoring last checkpoint
         if os.path.exists( f'{opt["output_path"]}/last_checkpoint.pth' ):
             iteration, best_accuracy, total_train_loss = experiment.load_checkpoint(
                 f'{opt["output_path"]}/last_checkpoint.pth' )
@@ -35,7 +35,7 @@ def main(opt):
         
         while iteration < opt['max_iterations']:
 
-            test_loss, test_accuracy, test_f1 = experiment.train_iteration(dataset, X, Y)
+            test_loss, test_accuracy, test_f1 = experiment.train_iteration(train_examples, X, Y)
             total_test_loss += test_loss
             logging.info(
                 f'[TEST - {iteration}] Loss: {test_loss} | Accuracy: {(100 * test_accuracy):.2f}')
@@ -50,15 +50,13 @@ def main(opt):
             iteration += 1
         
 
-    """
-    1)We use the best model(s) on the validation set on the test set
-    2)If the experiment is clip_disentangle, we also use 4 next best models
-    """
+    # The best model on the training data is used on the test data
     # Test
     experiment.load_checkpoint(f'{opt["output_path"]}/best_checkpoint.pth')
 
-    test_accuracy, _, test_f1, test_precision, test_recall, test_cm = experiment.validate( dataset, X, Y, test_examples )
+    test_accuracy, _, test_f1, test_precision, test_recall, test_cm = experiment.validate( train_examples, X, Y, test_examples )
 
+    # plotting confusion matrix
     labels = ['Close Up', 'Medium Close Up', 'Medium Shot', 'Medium Long Shot', 'Long Shot']
     cmd = ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=labels)
     fig, ax = plt.subplots(figsize=(10, 10))
