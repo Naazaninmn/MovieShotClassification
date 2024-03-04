@@ -1,1 +1,1 @@
-# KFold Approach
+# K-Fold Approach
